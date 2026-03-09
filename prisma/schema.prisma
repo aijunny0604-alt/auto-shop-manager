@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ── 재고 관리 ──
+
+model InventoryItem {
+  id          String   @id @default(cuid())
+  name        String
+  category    String
+  quantity    Int      @default(0)
+  minQuantity Int      @default(5)
+  unitPrice   Int      @default(0)
+  location    String?
+  memo        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  stockLogs       StockLog[]
+  servicePartUsed ServicePartUsed[]
+}
+
+model StockLog {
+  id              String        @id @default(cuid())
+  inventoryItemId String
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id], onDelete: Cascade)
+  type            String
+  quantity        Int
+  reason          String?
+  createdAt       DateTime      @default(now())
+}
+
+// ── 고객 관리 ──
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String?
+  memo      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vehicles     Vehicle[]
+  reservations Reservation[]
+}
+
+model Vehicle {
+  id          String   @id @default(cuid())
+  customerId  String
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  carModel    String
+  year        Int?
+  plateNumber String?
+  mileage     Int?
+  memo        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  serviceRecords ServiceRecord[]
+  reservations   Reservation[]
+}
+
+model ServiceRecord {
+  id          String   @id @default(cuid())
+  vehicleId   String
+  vehicle     Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  serviceDate DateTime
+  serviceType String
+  description String
+  cost        Int      @default(0)
+  memo        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  partsUsed ServicePartUsed[]
+}
+
+model ServicePartUsed {
+  id              String        @id @default(cuid())
+  serviceRecordId String
+  serviceRecord   ServiceRecord @relation(fields: [serviceRecordId], references: [id], onDelete: Cascade)
+  inventoryItemId String
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id])
+  quantity        Int
+}
+
+// ── 예약 관리 ──
+
+model Reservation {
+  id              String   @id @default(cuid())
+  customerId      String
+  customer        Customer @relation(fields: [customerId], references: [id])
+  vehicleId       String?
+  vehicle         Vehicle? @relation(fields: [vehicleId], references: [id])
+  scheduledAt     DateTime
+  duration        Int      @default(60)
+  serviceType     String
+  description     String?
+  status          String   @default("PENDING")
+  calendarEventId String?
+  memo            String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
