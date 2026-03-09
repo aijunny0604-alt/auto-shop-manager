@@ -6,6 +6,8 @@
     "startedAt": "2026-03-09T00:00:00Z",
     "planDoc": "docs/01-plan/features/auto-shop-manager.plan.md",
     "designDoc": "docs/02-design/features/auto-shop-manager.design.md",
-    "doCompleted": true
+    "doCompleted": true,
+    "matchRate": 92,
+    "iterationCount": 1
   }
 }
