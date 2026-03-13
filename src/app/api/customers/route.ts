@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { syncCustomerToSheet } from "@/lib/google-sheets";
 
 // GET /api/customers
 export async function GET(request: NextRequest) {
@@ -9,6 +10,7 @@ export async function GET(request: NextRequest) {
   const customers = await prisma.customer.findMany({
     where: search ? { name: { contains: search } } : {},
     orderBy: { updatedAt: "desc" },
+    take: search ? 15 : 100,
     include: {
       _count: { select: { vehicles: true, reservations: true } },
     },
@@ -29,6 +31,11 @@ export async function POST(request: NextRequest) {
   const customer = await prisma.customer.create({
     data: { name, phone: phone || null, memo: memo || null },
   });
+
+  // Google Sheets 동기화 (비동기, 실패해도 무시)
+  syncCustomerToSheet({ ...customer, createdAt: customer.createdAt.toISOString() }).catch((err) =>
+    console.error("Sheets customer sync failed:", err)
+  );
 
   return NextResponse.json(customer, { status: 201 });
 }

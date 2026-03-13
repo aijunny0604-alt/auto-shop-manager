@@ -4,14 +4,14 @@ import path from "path";
 
 const TOKEN_PATH = path.join(process.cwd(), "prisma", "google-token.json");
 
-const oauth2Client = new google.auth.OAuth2(
+export const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
   process.env.GOOGLE_REDIRECT_URI
 );
 
 // 저장된 토큰 로드
-function loadToken(): boolean {
+export function loadToken(): boolean {
   try {
     if (fs.existsSync(TOKEN_PATH)) {
       const token = JSON.parse(fs.readFileSync(TOKEN_PATH, "utf-8"));
@@ -34,7 +34,10 @@ export function saveToken(tokens: Record<string, unknown>) {
 export function getAuthUrl(): string {
   return oauth2Client.generateAuthUrl({
     access_type: "offline",
-    scope: ["https://www.googleapis.com/auth/calendar"],
+    scope: [
+      "https://www.googleapis.com/auth/calendar",
+      "https://www.googleapis.com/auth/spreadsheets",
+    ],
     prompt: "consent",
   });
 }

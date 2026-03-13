@@ -4,63 +4,104 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createReservationSchema } from "@/lib/validations/reservation";
-import { createReservation } from "@/features/reservations/api";
-import { fetchCustomers } from "@/features/customers/api";
+import { z } from "zod";
+import CustomerAutocomplete from "@/components/ui/CustomerAutocomplete";
 import { useAppStore } from "@/store/useAppStore";
 import type { Customer } from "@/types/customer";
 import { SERVICE_TYPES } from "@/types/customer";
-import { z } from "zod";
 
-type FormValues = z.infer<typeof createReservationSchema>;
+const reservationFormSchema = z.object({
+  scheduledAt: z.string().min(1, "예약 일시는 필수입니다."),
+  duration: z.number().int().min(15, "최소 15분 이상이어야 합니다."),
+  serviceType: z.enum(["정비", "튜닝", "점검", "기타"], {
+    error: "작업 유형은 정비, 튜닝, 점검, 기타 중 하나여야 합니다.",
+  }),
+  vehicleId: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  memo: z.string().optional().nullable(),
+});
+
+type FormValues = z.infer<typeof reservationFormSchema>;
 
 export default function NewReservationPage() {
   const router = useRouter();
   const addToast = useAppStore((s) => s.addToast);
-  const [customers, setCustomers] = useState<Customer[]>([]);
+
+  // 고객 상태 (자동완성으로 관리)
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [newCustomerName, setNewCustomerName] = useState<string | null>(null);
+  const [customerQuery, setCustomerQuery] = useState("");
+  const [newCustomerPhone, setNewCustomerPhone] = useState("");
+  const [customerError, setCustomerError] = useState("");
   const [vehicles, setVehicles] = useState<{ id: string; carModel: string }[]>([]);
 
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
-    resolver: zodResolver(createReservationSchema),
+    resolver: zodResolver(reservationFormSchema),
     defaultValues: {
       duration: 60,
       serviceType: "정비",
     },
   });
 
-  const selectedCustomerId = watch("customerId");
-
+  // 기존 고객 선택 시 차량 목록 로드
   useEffect(() => {
-    fetchCustomers().then(setCustomers);
-  }, []);
-
-  useEffect(() => {
-    if (selectedCustomerId) {
-      fetch(`/api/customers/${selectedCustomerId}`)
+    if (selectedCustomer) {
+      fetch(`/api/customers/${selectedCustomer.id}`)
         .then((r) => r.json())
-        .then((data) => setVehicles(data.vehicles || []));
+        .then((data) => setVehicles(data.vehicles || []))
+        .catch(() => setVehicles([]));
     } else {
       setVehicles([]);
     }
-  }, [selectedCustomerId]);
+  }, [selectedCustomer]);
 
   const onSubmit = async (data: FormValues) => {
+    // 고객 유효성 검사: 입력만 하고 드롭다운에서 선택 안 한 경우 → 자동으로 신규 고객 처리
+    const resolvedCustomerName = newCustomerName || (customerQuery.trim() || null);
+    if (!selectedCustomer && !resolvedCustomerName) {
+      setCustomerError("고객을 선택하거나 이름을 입력해주세요.");
+      return;
+    }
+    setCustomerError("");
+
     try {
-      await createReservation({
-        customerId: data.customerId,
+      const payload: Record<string, unknown> = {
         scheduledAt: data.scheduledAt,
         serviceType: data.serviceType,
         duration: data.duration,
         vehicleId: data.vehicleId || undefined,
         description: data.description || undefined,
         memo: data.memo || undefined,
+      };
+
+      if (selectedCustomer) {
+        payload.customerId = selectedCustomer.id;
+      } else {
+        payload.customerName = resolvedCustomerName;
+        payload.customerPhone = newCustomerPhone || undefined;
+      }
+
+      const res = await fetch("/api/reservations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
-      addToast("예약이 등록되었습니다.", "success");
+
+      if (!res.ok) {
+        const msg = await res.json().catch(() => ({ error: "서버 오류" }));
+        throw new Error(msg.error || "등록 실패");
+      }
+
+      addToast(
+        resolvedCustomerName
+          ? `"${resolvedCustomerName}" 고객 등록 + 예약 완료!`
+          : "예약이 등록되었습니다.",
+        "success"
+      );
       router.push("/reservations");
     } catch (err) {
       addToast(err instanceof Error ? err.message : "등록 실패", "error");
@@ -75,19 +116,58 @@ export default function NewReservationPage() {
     <div className="max-w-xl">
       <h1 className="text-2xl font-bold mb-6">예약 등록</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        {/* 고객 자동완성 */}
         <div>
           <label className="block text-sm font-medium mb-1">고객 *</label>
-          <select {...register("customerId")} className={inputClass}>
-            <option value="">고객 선택</option>
-            {customers.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name} {c.phone && `(${c.phone})`}
-              </option>
-            ))}
-          </select>
-          {errors.customerId && <p className={errorClass}>{errors.customerId.message}</p>}
+          <CustomerAutocomplete
+            selectedCustomer={selectedCustomer}
+            onSelect={(customer) => {
+              setSelectedCustomer(customer);
+              setNewCustomerName(null);
+              setCustomerQuery("");
+              setNewCustomerPhone("");
+              setCustomerError("");
+            }}
+            onNewCustomer={(name) => {
+              setSelectedCustomer(null);
+              setNewCustomerName(name);
+              setCustomerQuery("");
+              setCustomerError("");
+            }}
+            onQueryChange={(q) => setCustomerQuery(q)}
+            onClear={() => {
+              setSelectedCustomer(null);
+              setNewCustomerName(null);
+              setCustomerQuery("");
+              setNewCustomerPhone("");
+              setVehicles([]);
+            }}
+          />
+          {customerError && <p className={errorClass}>{customerError}</p>}
         </div>
 
+        {/* 신규 고객 전화번호 입력 */}
+        {(newCustomerName || (!selectedCustomer && customerQuery.trim())) && (
+          <div className="rounded-lg border border-[var(--primary)] bg-[var(--primary)]/5 p-3 space-y-2">
+            <p className="text-sm font-medium text-[var(--primary)]">
+              신규 고객: {newCustomerName || customerQuery.trim()}
+            </p>
+            <div>
+              <label className="block text-xs text-[var(--muted-foreground)] mb-1">
+                전화번호 (선택)
+              </label>
+              <input
+                type="tel"
+                value={newCustomerPhone}
+                onChange={(e) => setNewCustomerPhone(e.target.value)}
+                placeholder="010-0000-0000"
+                className={inputClass}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* 차량 선택 (기존 고객만) */}
         {vehicles.length > 0 && (
           <div>
             <label className="block text-sm font-medium mb-1">차량</label>

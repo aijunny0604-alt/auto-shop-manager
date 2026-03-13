@@ -25,12 +25,20 @@ export default function CustomersPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">고객 관리</h1>
-        <Link
-          href="/customers/new"
-          className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-medium text-[var(--primary-foreground)] hover:opacity-90"
-        >
-          + 고객 등록
-        </Link>
+        <div className="flex gap-2">
+          <Link
+            href="/reservations/new"
+            className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-medium text-[var(--primary-foreground)] hover:opacity-90"
+          >
+            + 예약 등록
+          </Link>
+          <Link
+            href="/customers/new"
+            className="rounded-lg border border-[var(--border)] px-4 py-2 text-sm font-medium hover:bg-[var(--accent)]"
+          >
+            + 고객만 등록
+          </Link>
+        </div>
       </div>
 
       <form
@@ -56,22 +64,20 @@ export default function CustomersPage() {
           등록된 고객이 없습니다.
         </div>
       ) : (
-        <div className="grid gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
           {customers.map((c) => (
             <Link
               key={c.id}
               href={`/customers/${c.id}`}
-              className="flex items-center justify-between rounded-lg border border-[var(--border)] p-4 hover:bg-[var(--accent)] transition-colors"
+              className="rounded-lg border border-[var(--border)] p-4 hover:bg-[var(--accent)] transition-colors"
             >
-              <div>
-                <p className="font-medium">{c.name}</p>
-                <p className="text-sm text-[var(--muted-foreground)]">
-                  {c.phone || "연락처 없음"}
-                </p>
-              </div>
-              <div className="flex gap-4 text-sm text-[var(--muted-foreground)]">
-                <span>차량 {c._count?.vehicles ?? 0}대</span>
-                <span>예약 {c._count?.reservations ?? 0}건</span>
+              <p className="font-medium truncate">{c.name}</p>
+              <p className="text-sm text-[var(--muted-foreground)] truncate">
+                {c.phone || "연락처 없음"}
+              </p>
+              <div className="flex gap-3 mt-2 text-xs text-[var(--muted-foreground)]">
+                <span>차량 {c._count?.vehicles ?? 0}</span>
+                <span>예약 {c._count?.reservations ?? 0}</span>
               </div>
             </Link>
           ))}

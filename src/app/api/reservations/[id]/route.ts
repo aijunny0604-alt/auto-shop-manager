@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { updateCalendarEvent, deleteCalendarEvent } from "@/lib/google-calendar";
+import { updateReservationInSheet, deleteReservationFromSheet } from "@/lib/google-sheets";
 
 // GET /api/reservations/[id]
 export async function GET(
@@ -63,6 +64,11 @@ export async function PUT(
     });
   }
 
+  // Google Sheets 동기화 (비동기)
+  updateReservationInSheet(id, reservation).catch((err) =>
+    console.error("Sheets reservation update failed:", err)
+  );
+
   return NextResponse.json(reservation);
 }
 
@@ -79,5 +85,11 @@ export async function DELETE(
   }
 
   await prisma.reservation.delete({ where: { id } });
+
+  // Google Sheets에서 삭제 (비동기)
+  deleteReservationFromSheet(id).catch((err) =>
+    console.error("Sheets reservation delete failed:", err)
+  );
+
   return NextResponse.json({ success: true });
 }

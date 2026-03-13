@@ -45,14 +45,21 @@ const columns: Column<InventoryItem>[] = [
 
 export default function InventoryPage() {
   const [items, setItems] = useState<InventoryItem[]>([]);
+  const [allItems, setAllItems] = useState<InventoryItem[]>([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(true);
+
+  // 기본 카테고리 + DB에 있는 커스텀 카테고리 병합
+  const allCategories = Array.from(
+    new Set([...CATEGORIES, ...allItems.map((i) => i.category)])
+  );
 
   const load = async () => {
     setLoading(true);
     const data = await fetchInventory(search, category);
     setItems(data);
+    if (!category && !search) setAllItems(data);
     setLoading(false);
   };
 
@@ -80,7 +87,7 @@ export default function InventoryPage() {
           className="rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm"
         >
           <option value="">전체 카테고리</option>
-          {CATEGORIES.map((c) => (
+          {allCategories.map((c) => (
             <option key={c} value={c}>{c}</option>
           ))}
         </select>

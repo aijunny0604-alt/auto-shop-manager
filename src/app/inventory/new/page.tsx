@@ -59,14 +59,18 @@ export default function NewInventoryPage() {
 
         <div>
           <label className="block text-sm font-medium mb-1">카테고리 *</label>
-          <select {...register("category")} className={inputClass}>
-            <option value="">선택하세요</option>
+          <input
+            {...register("category")}
+            list="category-list"
+            className={inputClass}
+            placeholder="선택 또는 직접 입력"
+            autoComplete="off"
+          />
+          <datalist id="category-list">
             {CATEGORIES.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
+              <option key={c} value={c} />
             ))}
-          </select>
+          </datalist>
           {errors.category && <p className={errorClass}>{errors.category.message}</p>}
         </div>
 
