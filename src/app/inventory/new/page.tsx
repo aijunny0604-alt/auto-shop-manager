@@ -1,67 +1,65 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createInventorySchema } from "@/lib/validations/inventory";
 import { createInventoryItem } from "@/features/inventory/api";
+import { useAppStore } from "@/store/useAppStore";
 import { CATEGORIES } from "@/types/inventory";
+import { z } from "zod";
+
+type FormValues = z.infer<typeof createInventorySchema>;
 
 export default function NewInventoryPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const addToast = useAppStore((s) => s.addToast);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
+    resolver: zodResolver(createInventorySchema),
+    defaultValues: {
+      quantity: 0,
+      minQuantity: 5,
+      unitPrice: 0,
+    },
+  });
 
-    const form = new FormData(e.currentTarget);
+  const onSubmit = async (data: FormValues) => {
     try {
-      await createInventoryItem({
-        name: form.get("name") as string,
-        category: form.get("category") as string,
-        quantity: Number(form.get("quantity")) || 0,
-        minQuantity: Number(form.get("minQuantity")) || 5,
-        unitPrice: Number(form.get("unitPrice")) || 0,
-        location: (form.get("location") as string) || undefined,
-        memo: (form.get("memo") as string) || undefined,
-      });
+      await createInventoryItem(data);
+      addToast("부품이 등록되었습니다.", "success");
       router.push("/inventory");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "등록 실패");
-    } finally {
-      setLoading(false);
+      addToast(err instanceof Error ? err.message : "등록 실패", "error");
     }
   };
+
+  const inputClass =
+    "w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm";
+  const errorClass = "text-xs text-[var(--destructive)] mt-1";
 
   return (
     <div className="max-w-xl">
       <h1 className="text-2xl font-bold mb-6">부품 등록</h1>
 
-      {error && (
-        <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-[var(--destructive)]">
-          {error}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <label className="block text-sm font-medium mb-1">부품명 *</label>
           <input
-            name="name"
-            required
-            className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm"
+            {...register("name")}
+            className={inputClass}
             placeholder="예: 엔진오일 5W-30"
           />
+          {errors.name && <p className={errorClass}>{errors.name.message}</p>}
         </div>
 
         <div>
           <label className="block text-sm font-medium mb-1">카테고리 *</label>
-          <select
-            name="category"
-            required
-            className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm"
-          >
+          <select {...register("category")} className={inputClass}>
             <option value="">선택하세요</option>
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>
@@ -69,37 +67,36 @@ export default function NewInventoryPage() {
               </option>
             ))}
           </select>
+          {errors.category && <p className={errorClass}>{errors.category.message}</p>}
         </div>
 
         <div className="grid grid-cols-3 gap-3">
           <div>
             <label className="block text-sm font-medium mb-1">초기 수량</label>
             <input
-              name="quantity"
+              {...register("quantity", { valueAsNumber: true })}
               type="number"
               min="0"
-              defaultValue="0"
-              className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm"
+              className={inputClass}
             />
+            {errors.quantity && <p className={errorClass}>{errors.quantity.message}</p>}
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">최소 수량</label>
             <input
-              name="minQuantity"
+              {...register("minQuantity", { valueAsNumber: true })}
               type="number"
               min="0"
-              defaultValue="5"
-              className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm"
+              className={inputClass}
             />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">단가 (원)</label>
             <input
-              name="unitPrice"
+              {...register("unitPrice", { valueAsNumber: true })}
               type="number"
               min="0"
-              defaultValue="0"
-              className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm"
+              className={inputClass}
             />
           </div>
         </div>
@@ -107,28 +104,24 @@ export default function NewInventoryPage() {
         <div>
           <label className="block text-sm font-medium mb-1">보관 위치</label>
           <input
-            name="location"
-            className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm"
+            {...register("location")}
+            className={inputClass}
             placeholder="예: 선반 A-3"
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium mb-1">메모</label>
-          <textarea
-            name="memo"
-            rows={3}
-            className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm"
-          />
+          <textarea {...register("memo")} rows={3} className={inputClass} />
         </div>
 
         <div className="flex gap-3 pt-2">
           <button
             type="submit"
-            disabled={loading}
+            disabled={isSubmitting}
             className="rounded-lg bg-[var(--primary)] px-6 py-2 text-sm font-medium text-[var(--primary-foreground)] hover:opacity-90 disabled:opacity-50"
           >
-            {loading ? "등록 중..." : "등록"}
+            {isSubmitting ? "등록 중..." : "등록"}
           </button>
           <button
             type="button"

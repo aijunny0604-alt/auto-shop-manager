@@ -53,7 +53,7 @@ export async function GET() {
       }),
     ]);
 
-  const lowStockItems = allItems.filter((i) => i.quantity <= i.minQuantity);
+  const lowStockItems = allItems.filter((i: { quantity: number; minQuantity: number }) => i.quantity <= i.minQuantity);
 
   return NextResponse.json({
     todayReservations,

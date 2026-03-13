@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { MobileNav } from "./MobileNav";
+import ToastContainer from "@/components/ui/Toast";
+import { useAppStore } from "@/store/useAppStore";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const sidebarOpen = useAppStore((s) => s.sidebarOpen);
+  const setSidebarOpen = useAppStore((s) => s.setSidebarOpen);
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -38,6 +40,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
       {/* Mobile Bottom Nav */}
       <MobileNav />
+
+      {/* Toast Notifications */}
+      <ToastContainer />
     </div>
   );
 }

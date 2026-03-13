@@ -16,7 +16,7 @@ export async function GET() {
   });
 
   const lowStockItems = allItems.filter(
-    (item) => item.quantity <= item.minQuantity
+    (item: { quantity: number; minQuantity: number }) => item.quantity <= item.minQuantity
   );
 
   return NextResponse.json(lowStockItems);

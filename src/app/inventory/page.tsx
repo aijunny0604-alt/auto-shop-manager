@@ -6,6 +6,42 @@ import { fetchInventory } from "@/features/inventory/api";
 import type { InventoryItem } from "@/types/inventory";
 import { CATEGORIES } from "@/types/inventory";
 import { formatCurrency } from "@/lib/utils";
+import SearchBar from "@/components/ui/SearchBar";
+import DataTable, { type Column } from "@/components/ui/DataTable";
+import StatusBadge from "@/components/ui/StatusBadge";
+
+const columns: Column<InventoryItem>[] = [
+  {
+    key: "name",
+    header: "부품명",
+    render: (item) => (
+      <Link href={`/inventory/${item.id}`} className="font-medium text-[var(--primary)] hover:underline">
+        {item.name}
+      </Link>
+    ),
+  },
+  { key: "category", header: "카테고리", render: (item) => item.category },
+  {
+    key: "quantity",
+    header: "수량",
+    align: "right",
+    render: (item) => (
+      <span className={item.quantity <= item.minQuantity ? "text-[var(--destructive)] font-bold" : ""}>{item.quantity}</span>
+    ),
+  },
+  {
+    key: "minQuantity",
+    header: "최소수량",
+    align: "right",
+    render: (item) => <span className="text-[var(--muted-foreground)]">{item.minQuantity}</span>,
+  },
+  { key: "unitPrice", header: "단가", align: "right", render: (item) => formatCurrency(item.unitPrice) },
+  {
+    key: "status",
+    header: "상태",
+    render: (item) => <StatusBadge status={item.quantity <= item.minQuantity ? "LOW_STOCK" : "IN_STOCK"} />,
+  },
+];
 
 export default function InventoryPage() {
   const [items, setItems] = useState<InventoryItem[]>([]);
@@ -36,23 +72,8 @@ export default function InventoryPage() {
         </Link>
       </div>
 
-      {/* 검색 & 필터 */}
       <div className="flex gap-3 mb-4">
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            load();
-          }}
-          className="flex-1"
-        >
-          <input
-            type="text"
-            placeholder="부품명 검색..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm"
-          />
-        </form>
+        <SearchBar value={search} onChange={setSearch} onSearch={load} placeholder="부품명 검색..." />
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
@@ -60,74 +81,19 @@ export default function InventoryPage() {
         >
           <option value="">전체 카테고리</option>
           {CATEGORIES.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
+            <option key={c} value={c}>{c}</option>
           ))}
         </select>
       </div>
 
-      {/* 테이블 */}
-      {loading ? (
-        <p className="text-[var(--muted-foreground)]">로딩 중...</p>
-      ) : items.length === 0 ? (
-        <div className="rounded-lg border border-[var(--border)] p-8 text-center text-[var(--muted-foreground)]">
-          등록된 부품이 없습니다.
-        </div>
-      ) : (
-        <div className="overflow-x-auto rounded-lg border border-[var(--border)]">
-          <table className="w-full text-sm">
-            <thead className="bg-[var(--muted)]">
-              <tr>
-                <th className="px-4 py-3 text-left font-medium">부품명</th>
-                <th className="px-4 py-3 text-left font-medium">카테고리</th>
-                <th className="px-4 py-3 text-right font-medium">수량</th>
-                <th className="px-4 py-3 text-right font-medium">최소수량</th>
-                <th className="px-4 py-3 text-right font-medium">단가</th>
-                <th className="px-4 py-3 text-left font-medium">위치</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((item) => (
-                <tr
-                  key={item.id}
-                  className="border-t border-[var(--border)] hover:bg-[var(--accent)] cursor-pointer"
-                >
-                  <td className="px-4 py-3">
-                    <Link
-                      href={`/inventory/${item.id}`}
-                      className="font-medium text-[var(--primary)] hover:underline"
-                    >
-                      {item.name}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-3">{item.category}</td>
-                  <td className="px-4 py-3 text-right">
-                    <span
-                      className={
-                        item.quantity <= item.minQuantity
-                          ? "text-[var(--destructive)] font-bold"
-                          : ""
-                      }
-                    >
-                      {item.quantity}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-right text-[var(--muted-foreground)]">
-                    {item.minQuantity}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    {formatCurrency(item.unitPrice)}
-                  </td>
-                  <td className="px-4 py-3 text-[var(--muted-foreground)]">
-                    {item.location || "-"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <DataTable
+        columns={columns}
+        data={items}
+        keyExtractor={(item) => item.id}
+        loading={loading}
+        emptyTitle="등록된 부품이 없습니다."
+        emptyDescription="부품을 등록하여 재고를 관리하세요."
+      />
     </div>
   );
 }
