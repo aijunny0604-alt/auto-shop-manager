@@ -51,6 +51,15 @@ export default function DashboardPage() {
       .then((d) => {
         setData(d);
         setLoading(false);
+      })
+      .catch(() => {
+        setData({
+          todayReservations: [],
+          lowStockItems: [],
+          recentServices: [],
+          stats: { todayCount: 0, weekCount: 0, lowStockCount: 0, totalCustomers: 0 },
+        });
+        setLoading(false);
       });
   }, []);
 

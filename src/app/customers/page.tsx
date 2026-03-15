@@ -12,8 +12,12 @@ export default function CustomersPage() {
 
   const load = async () => {
     setLoading(true);
-    const data = await fetchCustomers(search);
-    setCustomers(data);
+    try {
+      const data = await fetchCustomers(search);
+      setCustomers(data);
+    } catch {
+      setCustomers([]);
+    }
     setLoading(false);
   };
 

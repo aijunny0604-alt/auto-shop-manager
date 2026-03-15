@@ -69,9 +69,13 @@ export default function InventoryPage() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const data = await fetchInventory(search, category);
-    setItems(data);
-    if (!category && !search) setAllItems(data);
+    try {
+      const data = await fetchInventory(search, category);
+      setItems(data);
+      if (!category && !search) setAllItems(data);
+    } catch {
+      setItems([]);
+    }
     setLoading(false);
   }, [search, category]);
 

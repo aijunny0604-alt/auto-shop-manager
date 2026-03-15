@@ -15,8 +15,12 @@ export default function ReservationsPage() {
 
   const load = async () => {
     setLoading(true);
-    const data = await fetchReservations();
-    setReservations(data);
+    try {
+      const data = await fetchReservations();
+      setReservations(data);
+    } catch {
+      setReservations([]);
+    }
     setLoading(false);
 
     // Calendar 연결 상태 확인
