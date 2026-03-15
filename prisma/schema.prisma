@@ -89,6 +89,20 @@ model ServicePartUsed {
   quantity        Int
 }
 
+// ── 임포트 이력 ──
+
+model ImportHistory {
+  id           String   @id @default(cuid())
+  fileName     String
+  fileType     String   // "csv" | "xlsx"
+  rowCount     Int
+  successCount Int
+  errorCount   Int
+  status       String   // "SUCCESS" | "PARTIAL" | "FAILED"
+  errors       String?  // JSON array of error messages
+  createdAt    DateTime @default(now())
+}
+
 // ── 예약 관리 ──
 
 model Reservation {

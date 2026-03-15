@@ -36,6 +36,31 @@ export interface StockLogInput {
   reason?: string;
 }
 
+export interface ImportPreviewResult {
+  fileName: string;
+  headers: string[];
+  totalRows: number;
+  validRows: number;
+  previewRows: Record<string, string | number | null>[];
+  parsedRows: unknown[];
+  inventoryItems: {
+    name: string;
+    category: string;
+    totalUsed: number;
+    occurrences: number;
+  }[];
+}
+
+export interface ImportResult {
+  success: boolean;
+  importId: string;
+  totalRows: number;
+  successCount: number;
+  errorCount: number;
+  errors: string[];
+  inventoryItemsCreated: number;
+}
+
 export const CATEGORIES = [
   "엔진오일",
   "브레이크",
