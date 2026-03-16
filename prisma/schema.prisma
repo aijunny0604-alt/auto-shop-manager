@@ -24,6 +24,9 @@ model InventoryItem {
 
   stockLogs       StockLog[]
   servicePartUsed ServicePartUsed[]
+
+  @@index([category])
+  @@index([quantity])
 }
 
 model StockLog {
@@ -34,6 +37,8 @@ model StockLog {
   quantity        Int
   reason          String?
   createdAt       DateTime      @default(now())
+
+  @@index([inventoryItemId, createdAt])
 }
 
 // ── 고객 관리 ──
@@ -48,6 +53,8 @@ model Customer {
 
   vehicles     Vehicle[]
   reservations Reservation[]
+
+  @@index([name])
 }
 
 model Vehicle {
@@ -130,4 +137,8 @@ model Reservation {
   memo            String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  @@index([scheduledAt])
+  @@index([customerId])
+  @@index([status])
 }
