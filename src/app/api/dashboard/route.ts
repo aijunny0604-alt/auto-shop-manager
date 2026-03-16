@@ -8,7 +8,7 @@ export async function GET() {
   const todayEnd = new Date(todayStart.getTime() + 86400000);
   const weekEnd = new Date(todayStart.getTime() + 7 * 86400000);
 
-  const [todayReservations, weekReservations, allItems, recentServices] =
+  const [todayReservations, weekReservations, lowStockItems, recentServices, totalCustomers] =
     await Promise.all([
       // 오늘 예약
       prisma.reservation.findMany({
@@ -34,10 +34,13 @@ export async function GET() {
           vehicle: { select: { carModel: true } },
         },
       }),
-      // 재고 부족 (앱 레벨 필터)
-      prisma.inventoryItem.findMany({
-        orderBy: { quantity: "asc" },
-      }),
+      // 재고 부족 - DB에서 직접 필터링 (raw query)
+      prisma.$queryRaw`
+        SELECT id, name, category, quantity, "minQuantity", "unitPrice", location, memo
+        FROM "InventoryItem"
+        WHERE quantity <= "minQuantity"
+        ORDER BY quantity ASC
+      `,
       // 최근 정비 5건
       prisma.serviceRecord.findMany({
         orderBy: { serviceDate: "desc" },
@@ -51,9 +54,9 @@ export async function GET() {
           },
         },
       }),
+      // 총 고객 수 - 병렬 실행
+      prisma.customer.count(),
     ]);
-
-  const lowStockItems = allItems.filter((i: { quantity: number; minQuantity: number }) => i.quantity <= i.minQuantity);
 
   return NextResponse.json({
     todayReservations,
@@ -63,8 +66,8 @@ export async function GET() {
     stats: {
       todayCount: todayReservations.length,
       weekCount: weekReservations.length,
-      lowStockCount: lowStockItems.length,
-      totalCustomers: await prisma.customer.count(),
+      lowStockCount: (lowStockItems as unknown[]).length,
+      totalCustomers,
     },
   });
 }
