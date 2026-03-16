@@ -3,8 +3,8 @@ import "./globals.css";
 import { AppLayout } from "@/components/layout/AppLayout";
 
 export const metadata: Metadata = {
-  title: "Auto Shop Manager",
-  description: "자동차 정비 & 튜닝샵 관리 프로그램",
+  title: "BIGS MOTORS 오토샵 매니저",
+  description: "BIGS MOTORS 자동차 정비 & 튜닝샵 관리 프로그램",
 };
 
 export default function RootLayout({

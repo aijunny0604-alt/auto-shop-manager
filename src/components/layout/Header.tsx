@@ -11,7 +11,7 @@ export function Header({ onMenuClick }: { onMenuClick: () => void }) {
       </button>
       <div className="flex-1" />
       <span className="text-sm text-[var(--muted-foreground)]">
-        Auto Shop Manager
+        BIGS MOTORS 오토샵 매니저
       </span>
     </header>
   );

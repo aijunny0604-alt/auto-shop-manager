@@ -18,7 +18,7 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
     <aside className="flex h-full w-64 flex-col border-r border-[var(--border)] bg-[var(--card)]">
       <div className="flex h-14 items-center gap-2 border-b border-[var(--border)] px-4">
         <span className="text-xl">🔧</span>
-        <h1 className="text-lg font-bold">Auto Shop</h1>
+        <h1 className="text-lg font-bold">BIGS MOTORS</h1>
         {onClose && (
           <button onClick={onClose} className="ml-auto text-xl">
             ✕
