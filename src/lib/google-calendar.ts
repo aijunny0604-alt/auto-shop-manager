@@ -1,8 +1,7 @@
 import { google } from "googleapis";
-import fs from "fs";
-import path from "path";
+import { PrismaClient } from "@prisma/client";
 
-const TOKEN_PATH = path.join(process.cwd(), "prisma", "google-token.json");
+const prisma = new PrismaClient();
 
 export const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
@@ -10,11 +9,14 @@ export const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_REDIRECT_URI
 );
 
-// 저장된 토큰 로드
-export function loadToken(): boolean {
+// 저장된 토큰 로드 (DB에서)
+export async function loadToken(): Promise<boolean> {
   try {
-    if (fs.existsSync(TOKEN_PATH)) {
-      const token = JSON.parse(fs.readFileSync(TOKEN_PATH, "utf-8"));
+    const record = await prisma.googleToken.findUnique({
+      where: { id: "default" },
+    });
+    if (record) {
+      const token = JSON.parse(record.token);
       oauth2Client.setCredentials(token);
       return true;
     }
@@ -24,9 +26,13 @@ export function loadToken(): boolean {
   return false;
 }
 
-// 토큰 저장
-export function saveToken(tokens: Record<string, unknown>) {
-  fs.writeFileSync(TOKEN_PATH, JSON.stringify(tokens, null, 2));
+// 토큰 저장 (DB에)
+export async function saveToken(tokens: Record<string, unknown>) {
+  await prisma.googleToken.upsert({
+    where: { id: "default" },
+    update: { token: JSON.stringify(tokens) },
+    create: { id: "default", token: JSON.stringify(tokens) },
+  });
   oauth2Client.setCredentials(tokens as Parameters<typeof oauth2Client.setCredentials>[0]);
 }
 
@@ -45,19 +51,19 @@ export function getAuthUrl(): string {
 // 인증 코드로 토큰 교환
 export async function exchangeCode(code: string) {
   const { tokens } = await oauth2Client.getToken(code);
-  saveToken(tokens as Record<string, unknown>);
+  await saveToken(tokens as Record<string, unknown>);
   return tokens;
 }
 
 // Calendar API 인스턴스
-function getCalendar() {
-  loadToken();
+async function getCalendar() {
+  await loadToken();
   return google.calendar({ version: "v3", auth: oauth2Client });
 }
 
 // 연결 상태 확인
-export function isConnected(): boolean {
-  return loadToken();
+export async function isConnected(): Promise<boolean> {
+  return await loadToken();
 }
 
 // 이벤트 생성
@@ -67,10 +73,10 @@ export async function createCalendarEvent(data: {
   startTime: string;
   duration: number;
 }): Promise<string | null> {
-  if (!loadToken()) return null;
+  if (!(await loadToken())) return null;
 
   try {
-    const calendar = getCalendar();
+    const calendar = await getCalendar();
     const start = new Date(data.startTime);
     const end = new Date(start.getTime() + data.duration * 60000);
 
@@ -101,10 +107,10 @@ export async function updateCalendarEvent(
     duration: number;
   }
 ): Promise<boolean> {
-  if (!loadToken()) return false;
+  if (!(await loadToken())) return false;
 
   try {
-    const calendar = getCalendar();
+    const calendar = await getCalendar();
     const start = new Date(data.startTime);
     const end = new Date(start.getTime() + data.duration * 60000);
 
@@ -128,10 +134,10 @@ export async function updateCalendarEvent(
 
 // 이벤트 삭제
 export async function deleteCalendarEvent(eventId: string): Promise<boolean> {
-  if (!loadToken()) return false;
+  if (!(await loadToken())) return false;
 
   try {
-    const calendar = getCalendar();
+    const calendar = await getCalendar();
     await calendar.events.delete({
       calendarId: "primary",
       eventId,

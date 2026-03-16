@@ -3,7 +3,7 @@ import { google } from "googleapis";
 import { oauth2Client, loadToken } from "@/lib/google-calendar";
 
 export async function GET(request: NextRequest) {
-  if (!loadToken()) {
+  if (!(await loadToken())) {
     return NextResponse.json({ error: "Google Calendar 인증이 필요합니다." }, { status: 401 });
   }
 

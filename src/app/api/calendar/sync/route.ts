@@ -1,32 +1,11 @@
 import { NextResponse } from "next/server";
 import { google } from "googleapis";
 import { prisma } from "@/lib/prisma";
-import { isConnected, saveToken } from "@/lib/google-calendar";
-import fs from "fs";
-import path from "path";
-
-const TOKEN_PATH = path.join(process.cwd(), "prisma", "google-token.json");
-
-function getOAuthClient() {
-  const oauth2Client = new google.auth.OAuth2(
-    process.env.GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET,
-    process.env.GOOGLE_REDIRECT_URI
-  );
-  if (fs.existsSync(TOKEN_PATH)) {
-    const token = JSON.parse(fs.readFileSync(TOKEN_PATH, "utf-8"));
-    oauth2Client.setCredentials(token);
-  }
-  return oauth2Client;
-}
+import { isConnected, oauth2Client, saveToken } from "@/lib/google-calendar";
 
 // POST /api/calendar/sync
-// Google Calendar -> App DB 수동 동기화
-// 향후 N일 내 Google Calendar 이벤트를 가져와 앱 예약과 대조하고
-// calendarEventId 가 없는 예약에 eventId 를 매핑하거나
-// 캘린더에만 존재하는 이벤트를 보고(report)합니다.
 export async function POST() {
-  if (!isConnected()) {
+  if (!(await isConnected())) {
     return NextResponse.json(
       { error: "Google Calendar에 연결되어 있지 않습니다. 먼저 OAuth 인증을 완료하세요." },
       { status: 401 }
@@ -34,8 +13,6 @@ export async function POST() {
   }
 
   try {
-    const oauth2Client = getOAuthClient();
-
     // Access token 자동 갱신 핸들러
     oauth2Client.on("tokens", (tokens) => {
       if (tokens.refresh_token || tokens.access_token) {
@@ -75,14 +52,13 @@ export async function POST() {
       },
     });
 
-    // 캘린더 이벤트와 예약을 매핑: 제목 패턴 `[serviceType] customerName` 으로 매핑 시도
+    // 캘린더 이벤트와 예약을 매핑
     let linked = 0;
     for (const reservation of reservationsWithoutEventId) {
       const expectedPrefix = `[${reservation.serviceType}] ${reservation.customer.name}`;
       const match = calendarEvents.find((ev) => {
         if (!ev.summary) return false;
         if (!ev.summary.startsWith(expectedPrefix)) return false;
-        // 시작 시간이 ±5분 이내인지 확인
         const evStart = ev.start?.dateTime ?? ev.start?.date;
         if (!evStart) return false;
         const diff = Math.abs(
@@ -100,7 +76,7 @@ export async function POST() {
       }
     }
 
-    // calendarEventId 는 있지만 캘린더에서 해당 이벤트가 삭제된 예약 감지
+    // 고아 예약 감지
     const reservationsWithEventId = await prisma.reservation.findMany({
       where: {
         calendarEventId: { not: null },
