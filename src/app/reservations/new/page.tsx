@@ -34,6 +34,13 @@ export default function NewReservationPage() {
   const [newCustomerPhone, setNewCustomerPhone] = useState("");
   const [customerError, setCustomerError] = useState("");
   const [vehicles, setVehicles] = useState<{ id: string; carModel: string }[]>([]);
+  const [addNewVehicle, setAddNewVehicle] = useState(false);
+  const [newVehicle, setNewVehicle] = useState({
+    carModel: "",
+    year: "",
+    plateNumber: "",
+    mileage: "",
+  });
 
   const {
     register,
@@ -83,6 +90,16 @@ export default function NewReservationPage() {
       } else {
         payload.customerName = resolvedCustomerName;
         payload.customerPhone = newCustomerPhone || undefined;
+      }
+
+      // 새 차량 정보 추가
+      if (addNewVehicle && newVehicle.carModel.trim()) {
+        payload.newVehicle = {
+          carModel: newVehicle.carModel.trim(),
+          year: newVehicle.year ? parseInt(newVehicle.year) : null,
+          plateNumber: newVehicle.plateNumber || null,
+          mileage: newVehicle.mileage ? parseInt(newVehicle.mileage) : null,
+        };
       }
 
       const res = await fetch("/api/reservations", {
@@ -167,18 +184,86 @@ export default function NewReservationPage() {
           </div>
         )}
 
-        {/* 차량 선택 (기존 고객만) */}
-        {vehicles.length > 0 && (
+        {/* 차량 선택 (기존 고객) */}
+        {selectedCustomer && (
           <div>
             <label className="block text-sm font-medium mb-1">차량</label>
-            <select {...register("vehicleId")} className={inputClass}>
-              <option value="">선택 안함</option>
-              {vehicles.map((v) => (
-                <option key={v.id} value={v.id}>
-                  {v.carModel}
-                </option>
-              ))}
-            </select>
+            {vehicles.length > 0 ? (
+              <select {...register("vehicleId")} className={inputClass}>
+                <option value="">선택 안함</option>
+                {vehicles.map((v) => (
+                  <option key={v.id} value={v.id}>
+                    {v.carModel}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <p className="text-xs text-[var(--muted-foreground)]">등록된 차량 없음</p>
+            )}
+          </div>
+        )}
+
+        {/* 새 차량 등록 */}
+        <div className="border-t border-[var(--border)] pt-3">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={addNewVehicle}
+              onChange={(e) => setAddNewVehicle(e.target.checked)}
+              className="rounded"
+            />
+            <span className="text-sm font-medium">
+              {selectedCustomer ? "새 차량 추가 등록" : "차량 정보 함께 등록"}
+            </span>
+          </label>
+        </div>
+
+        {addNewVehicle && (
+          <div className="rounded-lg border border-[var(--border)] p-4 space-y-3 bg-[var(--accent)]/30">
+            <p className="text-sm font-medium">🚗 차량 정보</p>
+            <div>
+              <label className="block text-xs text-[var(--muted-foreground)] mb-1">차종 *</label>
+              <input
+                value={newVehicle.carModel}
+                onChange={(e) => setNewVehicle({ ...newVehicle, carModel: e.target.value })}
+                placeholder="예: 소나타, K5, 아반떼"
+                className={inputClass}
+              />
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <label className="block text-xs text-[var(--muted-foreground)] mb-1">연식</label>
+                <input
+                  type="number"
+                  value={newVehicle.year}
+                  onChange={(e) => setNewVehicle({ ...newVehicle, year: e.target.value })}
+                  placeholder="2023"
+                  min={1990}
+                  max={new Date().getFullYear() + 1}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-[var(--muted-foreground)] mb-1">번호판</label>
+                <input
+                  value={newVehicle.plateNumber}
+                  onChange={(e) => setNewVehicle({ ...newVehicle, plateNumber: e.target.value })}
+                  placeholder="12가 3456"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-[var(--muted-foreground)] mb-1">주행거리</label>
+                <input
+                  type="number"
+                  value={newVehicle.mileage}
+                  onChange={(e) => setNewVehicle({ ...newVehicle, mileage: e.target.value })}
+                  placeholder="km"
+                  min={0}
+                  className={inputClass}
+                />
+              </div>
+            </div>
           </div>
         )}
 

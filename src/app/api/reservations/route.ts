@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "잘못된 요청 형식입니다." }, { status: 400 });
   }
 
-  const { customerId, customerName, customerPhone, vehicleId, scheduledAt, duration, serviceType, description, memo } = body;
+  const { customerId, customerName, customerPhone, vehicleId, newVehicle, scheduledAt, duration, serviceType, description, memo } = body;
 
   if ((!customerId && !customerName) || !scheduledAt || !serviceType) {
     return NextResponse.json(
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    // 트랜잭션으로 고객 생성 + 예약 생성 원자성 보장
+    // 트랜잭션으로 고객 생성 + 차량 생성 + 예약 생성 원자성 보장
     const reservation = await prisma.$transaction(async (tx) => {
       let resolvedCustomerId = customerId;
 
@@ -69,10 +69,25 @@ export async function POST(request: NextRequest) {
         resolvedCustomerId = newCustomer.id;
       }
 
+      // 새 차량 등록
+      let resolvedVehicleId = vehicleId || null;
+      if (newVehicle && newVehicle.carModel) {
+        const createdVehicle = await tx.vehicle.create({
+          data: {
+            customerId: resolvedCustomerId,
+            carModel: newVehicle.carModel,
+            year: newVehicle.year || null,
+            plateNumber: newVehicle.plateNumber || null,
+            mileage: newVehicle.mileage || null,
+          },
+        });
+        resolvedVehicleId = createdVehicle.id;
+      }
+
       return tx.reservation.create({
         data: {
           customerId: resolvedCustomerId,
-          vehicleId: vehicleId || null,
+          vehicleId: resolvedVehicleId,
           scheduledAt: scheduledDate,
           duration: duration || 60,
           serviceType,

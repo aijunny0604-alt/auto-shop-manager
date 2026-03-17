@@ -22,20 +22,42 @@ export async function GET(request: NextRequest) {
 // POST /api/customers
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const { name, phone, memo } = body;
+  const { name, phone, memo, vehicle } = body;
 
   if (!name) {
     return NextResponse.json({ error: "이름은 필수입니다." }, { status: 400 });
   }
 
-  const customer = await prisma.customer.create({
-    data: { name, phone: phone || null, memo: memo || null },
+  const customer = await prisma.$transaction(async (tx) => {
+    const c = await tx.customer.create({
+      data: { name, phone: phone || null, memo: memo || null },
+    });
+
+    if (vehicle && vehicle.carModel) {
+      await tx.vehicle.create({
+        data: {
+          customerId: c.id,
+          carModel: vehicle.carModel,
+          year: vehicle.year || null,
+          plateNumber: vehicle.plateNumber || null,
+          mileage: vehicle.mileage || null,
+          memo: vehicle.memo || null,
+        },
+      });
+    }
+
+    return tx.customer.findUnique({
+      where: { id: c.id },
+      include: { vehicles: true, _count: { select: { vehicles: true, reservations: true } } },
+    });
   });
 
   // Google Sheets 동기화 (비동기, 실패해도 무시)
-  syncCustomerToSheet({ ...customer, createdAt: customer.createdAt.toISOString() }).catch((err) =>
-    console.error("Sheets customer sync failed:", err)
-  );
+  if (customer) {
+    syncCustomerToSheet({ ...customer, createdAt: customer.createdAt.toISOString() }).catch((err) =>
+      console.error("Sheets customer sync failed:", err)
+    );
+  }
 
   return NextResponse.json(customer, { status: 201 });
 }

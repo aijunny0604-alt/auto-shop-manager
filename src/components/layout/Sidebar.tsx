@@ -8,6 +8,7 @@ const navItems = [
   { href: "/inventory", label: "재고 관리", icon: "📦" },
   { href: "/customers", label: "고객 관리", icon: "👥" },
   { href: "/reservations", label: "예약 관리", icon: "📅" },
+  { href: "/estimates", label: "견적서", icon: "📝" },
   { href: "/calendar", label: "캘린더", icon: "📆" },
 ];
 

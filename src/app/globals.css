@@ -53,6 +53,27 @@ body {
   font-family: system-ui, -apple-system, sans-serif;
 }
 
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  /* 인쇄 시 AppLayout(사이드바, 헤더, 모바일 네비) 숨김 */
+  aside,
+  header,
+  nav {
+    display: none !important;
+  }
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+}
+
 @keyframes slideIn {
   from {
     opacity: 0;

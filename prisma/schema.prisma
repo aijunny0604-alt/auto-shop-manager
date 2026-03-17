@@ -53,6 +53,7 @@ model Customer {
 
   vehicles     Vehicle[]
   reservations Reservation[]
+  estimates    Estimate[]
 
   @@index([name])
 }
@@ -71,6 +72,7 @@ model Vehicle {
 
   serviceRecords ServiceRecord[]
   reservations   Reservation[]
+  estimates      Estimate[]
 }
 
 model ServiceRecord {
@@ -141,4 +143,42 @@ model Reservation {
   @@index([scheduledAt])
   @@index([customerId])
   @@index([status])
+}
+
+// ── 견적서 관리 ──
+
+model Estimate {
+  id          String    @id @default(cuid())
+  estimateNo  String    @unique
+  customerId  String
+  customer    Customer  @relation(fields: [customerId], references: [id])
+  vehicleId   String?
+  vehicle     Vehicle?  @relation(fields: [vehicleId], references: [id])
+  status      String    @default("DRAFT")
+  validUntil  DateTime?
+  totalAmount Int       @default(0)
+  discount    Int       @default(0)
+  memo        String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  items EstimateItem[]
+
+  @@index([customerId])
+  @@index([estimateNo])
+  @@index([createdAt])
+}
+
+model EstimateItem {
+  id              String    @id @default(cuid())
+  estimateId      String
+  estimate        Estimate  @relation(fields: [estimateId], references: [id], onDelete: Cascade)
+  type            String
+  name            String
+  inventoryItemId String?
+  quantity        Int       @default(1)
+  unitPrice       Int       @default(0)
+  amount          Int       @default(0)
+  memo            String?
+  sortOrder       Int       @default(0)
 }
