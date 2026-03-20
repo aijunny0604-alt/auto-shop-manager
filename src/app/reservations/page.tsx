@@ -61,7 +61,7 @@ export default function ReservationsPage() {
           {!calendarConnected && (
             <a
               href="/api/auth/google"
-              className="rounded-lg border border-[var(--border)] px-3 py-2 text-sm hover:bg-[var(--accent)]"
+              className="glass-card rounded-lg px-3 py-2 text-sm hover:bg-[var(--accent)]"
             >
               Google Calendar 연결
             </a>
@@ -73,7 +73,7 @@ export default function ReservationsPage() {
           )}
           <Link
             href="/reservations/new"
-            className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-medium text-[var(--primary-foreground)] hover:opacity-90"
+            className="glass-btn rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90"
           >
             + 예약 등록
           </Link>
@@ -83,7 +83,7 @@ export default function ReservationsPage() {
       {loading ? (
         <p className="text-[var(--muted-foreground)]">로딩 중...</p>
       ) : reservations.length === 0 ? (
-        <div className="rounded-lg border border-[var(--border)] p-8 text-center text-[var(--muted-foreground)]">
+        <div className="glass-card p-8 text-center text-[var(--muted-foreground)]">
           등록된 예약이 없습니다.
         </div>
       ) : (
@@ -91,7 +91,7 @@ export default function ReservationsPage() {
           {reservations.map((r) => (
             <div
               key={r.id}
-              className="rounded-lg border border-[var(--border)] p-4"
+              className="glass-card p-4"
             >
               <div className="flex items-start justify-between">
                 <div>
@@ -131,7 +131,7 @@ export default function ReservationsPage() {
                   )}
                   <Link
                     href={`/reservations/${r.id}`}
-                    className="rounded px-2 py-1 text-xs border border-[var(--border)] hover:bg-[var(--accent)]"
+                    className="glass-card rounded px-2 py-1 text-xs hover:bg-[var(--accent)]"
                   >
                     수정
                   </Link>

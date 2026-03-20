@@ -114,8 +114,7 @@ export default function NewEstimatePage() {
     }
   };
 
-  const inputClass =
-    "w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm";
+  const inputClass = "glass-input w-full rounded-lg px-3 py-2 text-sm";
 
   return (
     <div className="max-w-3xl">
@@ -192,7 +191,7 @@ export default function NewEstimatePage() {
             {items.map((item, idx) => (
               <div
                 key={idx}
-                className="rounded-lg border border-[var(--border)] p-3 space-y-2"
+                className="glass-card p-3 space-y-2"
               >
                 <div className="flex items-center gap-2">
                   <span
@@ -277,7 +276,7 @@ export default function NewEstimatePage() {
         </div>
 
         {/* 합계 */}
-        <div className="rounded-lg border border-[var(--border)] p-4 bg-[var(--secondary)]/50">
+        <div className="glass-card p-4">
           <div className="flex justify-between text-sm mb-1">
             <span>소계</span>
             <span>{formatCurrency(subtotal)}원</span>
@@ -289,7 +288,7 @@ export default function NewEstimatePage() {
               value={discount}
               onChange={(e) => setDiscount(Math.max(0, parseInt(e.target.value) || 0))}
               min={0}
-              className="w-32 rounded border border-[var(--border)] bg-[var(--background)] px-2 py-1 text-sm text-right"
+              className="glass-input w-32 rounded px-2 py-1 text-sm text-right"
             />
           </div>
           <div className="flex justify-between font-bold text-lg border-t border-[var(--border)] pt-2">
@@ -325,13 +324,13 @@ export default function NewEstimatePage() {
           <button
             onClick={handleSubmit}
             disabled={submitting}
-            className="rounded-lg bg-[var(--primary)] px-6 py-2 text-sm font-medium text-[var(--primary-foreground)] disabled:opacity-50"
+            className="glass-btn rounded-lg px-6 py-2 text-sm font-medium disabled:opacity-50"
           >
             {submitting ? "저장 중..." : "견적서 저장"}
           </button>
           <button
             onClick={() => router.back()}
-            className="rounded-lg border border-[var(--border)] px-6 py-2 text-sm hover:bg-[var(--accent)]"
+            className="glass-card rounded-lg px-6 py-2 text-sm hover:bg-[var(--accent)]"
           >
             취소
           </button>

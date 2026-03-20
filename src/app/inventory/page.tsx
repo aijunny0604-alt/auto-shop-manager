@@ -135,7 +135,7 @@ export default function InventoryPage() {
           <button
             onClick={handleExport}
             disabled={exporting}
-            className="rounded-lg border border-[var(--border)] px-3 py-2 text-sm hover:bg-[var(--muted)] disabled:opacity-50 flex items-center gap-1.5"
+            className="glass-btn rounded-lg px-3 py-2 text-sm disabled:opacity-50 flex items-center gap-1.5"
             title="Excel 백업 다운로드"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -145,7 +145,7 @@ export default function InventoryPage() {
           {/* CSV/Excel 업로드 */}
           <button
             onClick={() => setShowUpload(true)}
-            className="rounded-lg border border-[var(--border)] px-3 py-2 text-sm hover:bg-[var(--muted)] flex items-center gap-1.5"
+            className="glass-btn rounded-lg px-3 py-2 text-sm flex items-center gap-1.5"
             title="CSV/Excel 파일 업로드"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -155,7 +155,7 @@ export default function InventoryPage() {
           {/* 부품 등록 */}
           <Link
             href="/inventory/new"
-            className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-medium text-[var(--primary-foreground)] hover:opacity-90"
+            className="glass-btn rounded-lg px-4 py-2 text-sm font-medium"
           >
             + 부품 등록
           </Link>
@@ -167,7 +167,7 @@ export default function InventoryPage() {
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm"
+          className="glass-input rounded-lg px-3 py-2 text-sm"
         >
           <option value="">전체 카테고리</option>
           {allCategories.map((c) => (

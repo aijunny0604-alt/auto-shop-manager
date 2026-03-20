@@ -32,13 +32,13 @@ export default function CustomersPage() {
         <div className="flex gap-2">
           <Link
             href="/reservations/new"
-            className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-medium text-[var(--primary-foreground)] hover:opacity-90"
+            className="glass-btn rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90"
           >
             + 예약 등록
           </Link>
           <Link
             href="/customers/new"
-            className="rounded-lg border border-[var(--border)] px-4 py-2 text-sm font-medium hover:bg-[var(--accent)]"
+            className="glass-card rounded-lg px-4 py-2 text-sm font-medium hover:bg-[var(--accent)]"
           >
             + 고객만 등록
           </Link>
@@ -57,14 +57,14 @@ export default function CustomersPage() {
           placeholder="고객명 검색..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-md rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm"
+          className="glass-input w-full max-w-md rounded-lg px-3 py-2 text-sm"
         />
       </form>
 
       {loading ? (
         <p className="text-[var(--muted-foreground)]">로딩 중...</p>
       ) : customers.length === 0 ? (
-        <div className="rounded-lg border border-[var(--border)] p-8 text-center text-[var(--muted-foreground)]">
+        <div className="glass-card p-8 text-center text-[var(--muted-foreground)]">
           등록된 고객이 없습니다.
         </div>
       ) : (
@@ -73,7 +73,7 @@ export default function CustomersPage() {
             <Link
               key={c.id}
               href={`/customers/${c.id}`}
-              className="rounded-lg border border-[var(--border)] p-4 hover:bg-[var(--accent)] transition-colors"
+              className="glass-card p-4 hover:bg-[var(--accent)] transition-colors"
             >
               <p className="font-medium truncate">{c.name}</p>
               <p className="text-sm text-[var(--muted-foreground)] truncate">

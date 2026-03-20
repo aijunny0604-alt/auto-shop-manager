@@ -39,7 +39,7 @@ export default function NewInventoryPage() {
   };
 
   const inputClass =
-    "w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm";
+    "glass-input w-full rounded-lg px-3 py-2 text-sm";
   const errorClass = "text-xs text-[var(--destructive)] mt-1";
 
   return (
@@ -123,14 +123,14 @@ export default function NewInventoryPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="rounded-lg bg-[var(--primary)] px-6 py-2 text-sm font-medium text-[var(--primary-foreground)] hover:opacity-90 disabled:opacity-50"
+            className="glass-btn rounded-lg px-6 py-2 text-sm font-medium disabled:opacity-50"
           >
             {isSubmitting ? "등록 중..." : "등록"}
           </button>
           <button
             type="button"
             onClick={() => router.back()}
-            className="rounded-lg border border-[var(--border)] px-6 py-2 text-sm font-medium hover:bg-[var(--accent)]"
+            className="glass-btn rounded-lg px-6 py-2 text-sm font-medium"
           >
             취소
           </button>

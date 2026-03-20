@@ -67,13 +67,13 @@ export default function EstimateDetailPage({
         <div className="flex gap-2">
           <Link
             href={`/estimates/${id}/print`}
-            className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-medium text-[var(--primary-foreground)]"
+            className="glass-btn rounded-lg px-4 py-2 text-sm font-medium"
           >
             인쇄 / PDF
           </Link>
           <button
             onClick={handleDelete}
-            className="rounded-lg border border-[var(--destructive)]/30 px-4 py-2 text-sm text-[var(--destructive)] hover:bg-[var(--destructive)]/10"
+            className="glass-btn-danger rounded-lg px-4 py-2 text-sm"
           >
             삭제
           </button>
@@ -88,7 +88,7 @@ export default function EstimateDetailPage({
             onClick={() => handleStatusChange(key)}
             className={`rounded-full px-4 py-1.5 text-xs font-medium transition-colors ${
               estimate.status === key
-                ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
+                ? "glass-btn"
                 : "border border-[var(--border)] hover:bg-[var(--accent)]"
             }`}
           >
@@ -98,7 +98,7 @@ export default function EstimateDetailPage({
       </div>
 
       {/* 고객/차량 정보 */}
-      <div className="rounded-lg border border-[var(--border)] p-4 mb-4">
+      <div className="glass-card p-4 mb-4">
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <span className="text-[var(--muted-foreground)]">고객: </span>
@@ -184,7 +184,7 @@ export default function EstimateDetailPage({
       )}
 
       {/* 합계 */}
-      <div className="rounded-lg border border-[var(--border)] p-4 bg-[var(--secondary)]/50">
+      <div className="glass-card p-4">
         <div className="flex justify-between text-sm mb-1">
           <span>소계</span>
           <span>{formatCurrency(estimate.totalAmount + estimate.discount)}</span>
@@ -210,7 +210,7 @@ export default function EstimateDetailPage({
       <div className="mt-6">
         <button
           onClick={() => router.push("/estimates")}
-          className="rounded-lg border border-[var(--border)] px-6 py-2 text-sm hover:bg-[var(--accent)]"
+          className="glass-card rounded-lg px-6 py-2 text-sm hover:bg-[var(--accent)]"
         >
           목록으로
         </button>

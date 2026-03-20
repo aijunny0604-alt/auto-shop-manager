@@ -87,21 +87,21 @@ export default function DashboardPage() {
 
       {/* 통계 카드 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="rounded-lg border border-[var(--border)] p-4">
+        <div className="glass-card p-4">
           <p className="text-sm text-[var(--muted-foreground)]">오늘 예약</p>
           <p className="text-3xl font-bold text-[var(--primary)]">{data.stats.todayCount}</p>
         </div>
-        <div className="rounded-lg border border-[var(--border)] p-4">
+        <div className="glass-card p-4">
           <p className="text-sm text-[var(--muted-foreground)]">이번 주 예약</p>
           <p className="text-3xl font-bold">{data.stats.weekCount}</p>
         </div>
-        <div className="rounded-lg border border-[var(--border)] p-4">
+        <div className="glass-card p-4">
           <p className="text-sm text-[var(--muted-foreground)]">재고 부족</p>
           <p className={`text-3xl font-bold ${data.stats.lowStockCount > 0 ? "text-[var(--destructive)]" : ""}`}>
             {data.stats.lowStockCount}
           </p>
         </div>
-        <div className="rounded-lg border border-[var(--border)] p-4">
+        <div className="glass-card p-4">
           <p className="text-sm text-[var(--muted-foreground)]">전체 고객</p>
           <p className="text-3xl font-bold">{data.stats.totalCustomers}</p>
         </div>
@@ -117,7 +117,7 @@ export default function DashboardPage() {
             </Link>
           </div>
           {data.todayReservations.length === 0 ? (
-            <div className="rounded-lg border border-[var(--border)] p-6 text-center text-[var(--muted-foreground)]">
+            <div className="glass-card p-6 text-center text-[var(--muted-foreground)]">
               오늘 예약이 없습니다.
             </div>
           ) : (
@@ -126,7 +126,7 @@ export default function DashboardPage() {
                 <Link
                   key={r.id}
                   href={`/reservations/${r.id}`}
-                  className="block rounded-lg border border-[var(--border)] p-3 hover:bg-[var(--accent)] transition-colors"
+                  className="block glass-card p-3 hover:bg-[var(--accent)] transition-colors"
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <span className={`rounded px-1.5 py-0.5 text-xs font-bold ${statusColors[r.status] || ""}`}>
@@ -155,7 +155,7 @@ export default function DashboardPage() {
             </Link>
           </div>
           {data.lowStockItems.length === 0 ? (
-            <div className="rounded-lg border border-[var(--border)] p-6 text-center text-[var(--muted-foreground)]">
+            <div className="glass-card p-6 text-center text-[var(--muted-foreground)]">
               부족한 재고가 없습니다.
             </div>
           ) : (
@@ -164,7 +164,7 @@ export default function DashboardPage() {
                 <Link
                   key={item.id}
                   href={`/inventory/${item.id}`}
-                  className="flex items-center justify-between rounded-lg border border-[var(--border)] p-3 hover:bg-[var(--accent)] transition-colors"
+                  className="flex items-center justify-between glass-card p-3 hover:bg-[var(--accent)] transition-colors"
                 >
                   <div>
                     <p className="font-medium text-sm">{item.name}</p>
@@ -184,11 +184,11 @@ export default function DashboardPage() {
         <div className="md:col-span-2">
           <h2 className="text-lg font-bold mb-3">최근 정비 내역</h2>
           {data.recentServices.length === 0 ? (
-            <div className="rounded-lg border border-[var(--border)] p-6 text-center text-[var(--muted-foreground)]">
+            <div className="glass-card p-6 text-center text-[var(--muted-foreground)]">
               정비 이력이 없습니다.
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-lg border border-[var(--border)]">
+            <div className="overflow-x-auto glass-card">
               <table className="w-full text-sm">
                 <thead className="bg-[var(--muted)]">
                   <tr>
@@ -206,7 +206,7 @@ export default function DashboardPage() {
                       <td className="px-4 py-2 text-[var(--muted-foreground)]">{new Date(s.serviceDate).toLocaleDateString("ko-KR")}</td>
                       <td className="px-4 py-2">{s.vehicle.customer.name}</td>
                       <td className="px-4 py-2">{s.vehicle.carModel}</td>
-                      <td className="px-4 py-2"><span className="rounded bg-[var(--primary)] px-1.5 py-0.5 text-xs text-[var(--primary-foreground)]">{s.serviceType}</span></td>
+                      <td className="px-4 py-2"><span className="glass-btn rounded px-1.5 py-0.5 text-xs">{s.serviceType}</span></td>
                       <td className="px-4 py-2">{s.description}</td>
                       <td className="px-4 py-2 text-right">{formatCurrency(s.cost)}</td>
                     </tr>

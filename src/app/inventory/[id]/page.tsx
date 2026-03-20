@@ -82,13 +82,13 @@ export default function InventoryDetailPage() {
         <div className="flex gap-2">
           <button
             onClick={() => setEditing(!editing)}
-            className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm hover:bg-[var(--accent)]"
+            className="glass-btn rounded-lg px-3 py-1.5 text-sm"
           >
             {editing ? "취소" : "수정"}
           </button>
           <button
             onClick={handleDelete}
-            className="rounded-lg bg-[var(--destructive)] px-3 py-1.5 text-sm text-white hover:opacity-90"
+            className="glass-btn-danger rounded-lg px-3 py-1.5 text-sm"
           >
             삭제
           </button>
@@ -97,22 +97,22 @@ export default function InventoryDetailPage() {
 
       {editing ? (
         <form onSubmit={handleUpdate} className="space-y-4 mb-8">
-          <input name="name" defaultValue={item.name as string} required className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm" />
-          <input name="category" defaultValue={item.category as string} list="category-list-edit" autoComplete="off" placeholder="선택 또는 직접 입력" className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm" />
+          <input name="name" defaultValue={item.name as string} required className="glass-input w-full rounded-lg px-3 py-2 text-sm" />
+          <input name="category" defaultValue={item.category as string} list="category-list-edit" autoComplete="off" placeholder="선택 또는 직접 입력" className="glass-input w-full rounded-lg px-3 py-2 text-sm" />
           <datalist id="category-list-edit">
             {CATEGORIES.map((c) => <option key={c} value={c} />)}
           </datalist>
           <div className="grid grid-cols-3 gap-3">
-            <input name="quantity" type="number" defaultValue={item.quantity as number} className="rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm" />
-            <input name="minQuantity" type="number" defaultValue={item.minQuantity as number} className="rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm" />
-            <input name="unitPrice" type="number" defaultValue={item.unitPrice as number} className="rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm" />
+            <input name="quantity" type="number" defaultValue={item.quantity as number} className="glass-input rounded-lg px-3 py-2 text-sm" />
+            <input name="minQuantity" type="number" defaultValue={item.minQuantity as number} className="glass-input rounded-lg px-3 py-2 text-sm" />
+            <input name="unitPrice" type="number" defaultValue={item.unitPrice as number} className="glass-input rounded-lg px-3 py-2 text-sm" />
           </div>
-          <input name="location" defaultValue={(item.location as string) || ""} placeholder="보관 위치" className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm" />
-          <textarea name="memo" defaultValue={(item.memo as string) || ""} rows={2} className="w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm" />
-          <button type="submit" className="rounded-lg bg-[var(--primary)] px-6 py-2 text-sm text-[var(--primary-foreground)]">저장</button>
+          <input name="location" defaultValue={(item.location as string) || ""} placeholder="보관 위치" className="glass-input w-full rounded-lg px-3 py-2 text-sm" />
+          <textarea name="memo" defaultValue={(item.memo as string) || ""} rows={2} className="glass-input w-full rounded-lg px-3 py-2 text-sm" />
+          <button type="submit" className="glass-btn rounded-lg px-6 py-2 text-sm">저장</button>
         </form>
       ) : (
-        <div className="grid grid-cols-2 gap-4 mb-8 rounded-lg border border-[var(--border)] p-4">
+        <div className="glass-card grid grid-cols-2 gap-4 mb-8 p-4">
           <div><span className="text-xs text-[var(--muted-foreground)]">카테고리</span><p className="font-medium">{item.category as string}</p></div>
           <div><span className="text-xs text-[var(--muted-foreground)]">수량</span><p className={`font-medium ${(item.quantity as number) <= (item.minQuantity as number) ? "text-[var(--destructive)]" : ""}`}>{item.quantity as number}개</p></div>
           <div><span className="text-xs text-[var(--muted-foreground)]">최소 수량</span><p className="font-medium">{item.minQuantity as number}개</p></div>
@@ -125,13 +125,13 @@ export default function InventoryDetailPage() {
       {/* 입출고 */}
       <h2 className="text-lg font-bold mb-3">입출고 기록</h2>
       <form onSubmit={handleStock} className="flex gap-2 mb-4 flex-wrap">
-        <select value={stockType} onChange={(e) => setStockType(e.target.value as "IN" | "OUT")} className="rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm">
+        <select value={stockType} onChange={(e) => setStockType(e.target.value as "IN" | "OUT")} className="glass-input rounded-lg px-3 py-2 text-sm">
           <option value="IN">입고</option>
           <option value="OUT">출고</option>
         </select>
-        <input type="number" min="1" value={stockQty} onChange={(e) => setStockQty(Number(e.target.value))} className="w-20 rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm" />
-        <input placeholder="사유" value={stockReason} onChange={(e) => setStockReason(e.target.value)} className="flex-1 min-w-[150px] rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm" />
-        <button type="submit" className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm text-[var(--primary-foreground)]">기록</button>
+        <input type="number" min="1" value={stockQty} onChange={(e) => setStockQty(Number(e.target.value))} className="glass-input w-20 rounded-lg px-3 py-2 text-sm" />
+        <input placeholder="사유" value={stockReason} onChange={(e) => setStockReason(e.target.value)} className="glass-input flex-1 min-w-[150px] rounded-lg px-3 py-2 text-sm" />
+        <button type="submit" className="glass-btn rounded-lg px-4 py-2 text-sm">기록</button>
       </form>
 
       {stockLogs.length === 0 ? (
@@ -139,7 +139,7 @@ export default function InventoryDetailPage() {
       ) : (
         <div className="space-y-2">
           {stockLogs.map((log: StockLog) => (
-            <div key={log.id} className="flex items-center gap-3 rounded-lg border border-[var(--border)] p-3 text-sm">
+            <div key={log.id} className="glass-card flex items-center gap-3 rounded-lg p-3 text-sm">
               <span className={`rounded px-2 py-0.5 text-xs font-bold ${log.type === "IN" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
                 {log.type === "IN" ? "입고" : "출고"}
               </span>

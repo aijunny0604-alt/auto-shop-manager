@@ -62,8 +62,7 @@ export default function NewCustomerPage() {
     }
   };
 
-  const inputClass =
-    "w-full rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm";
+  const inputClass = "glass-input w-full rounded-lg px-3 py-2 text-sm";
   const errorClass = "text-xs text-[var(--destructive)] mt-1";
 
   return (
@@ -104,7 +103,7 @@ export default function NewCustomerPage() {
         </div>
 
         {addVehicle && (
-          <div className="rounded-lg border border-[var(--border)] p-4 space-y-3 bg-[var(--accent)]/30">
+          <div className="glass-card p-4 space-y-3 bg-[var(--accent)]/30">
             <p className="text-sm font-medium">🚗 차량 정보</p>
             <div>
               <label className="block text-xs text-[var(--muted-foreground)] mb-1">차종 *</label>
@@ -167,14 +166,14 @@ export default function NewCustomerPage() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="rounded-lg bg-[var(--primary)] px-6 py-2 text-sm font-medium text-[var(--primary-foreground)] disabled:opacity-50"
+            className="glass-btn rounded-lg px-6 py-2 text-sm font-medium disabled:opacity-50"
           >
             {isSubmitting ? "등록 중..." : "등록"}
           </button>
           <button
             type="button"
             onClick={() => router.back()}
-            className="rounded-lg border border-[var(--border)] px-6 py-2 text-sm hover:bg-[var(--accent)]"
+            className="glass-card rounded-lg px-6 py-2 text-sm hover:bg-[var(--accent)]"
           >
             취소
           </button>

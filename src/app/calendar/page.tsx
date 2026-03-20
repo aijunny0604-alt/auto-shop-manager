@@ -105,7 +105,7 @@ export default function CalendarPage() {
         <p className="text-lg mb-4">Google Calendar 연결이 필요합니다.</p>
         <a
           href="/api/auth/google"
-          className="inline-block rounded-lg bg-[var(--primary)] px-6 py-3 text-sm font-medium text-[var(--primary-foreground)] hover:opacity-90"
+          className="glass-btn inline-block rounded-lg px-6 py-3 text-sm font-medium hover:opacity-90"
         >
           Google Calendar 연결하기
         </a>
@@ -120,7 +120,7 @@ export default function CalendarPage() {
         <div className="flex gap-2">
           <Link
             href="/reservations/new"
-            className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-medium text-[var(--primary-foreground)] hover:opacity-90"
+            className="glass-btn rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90"
           >
             + 예약 등록
           </Link>
@@ -130,29 +130,29 @@ export default function CalendarPage() {
       {/* 네비게이션 */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <button onClick={() => goMonth(-1)} className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm hover:bg-[var(--accent)]">
+          <button onClick={() => goMonth(-1)} className="glass-card rounded-lg px-3 py-1.5 text-sm hover:bg-[var(--accent)]">
             &lt;
           </button>
           <h2 className="text-lg font-bold min-w-[140px] text-center">
             {year}년 {month + 1}월
           </h2>
-          <button onClick={() => goMonth(1)} className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm hover:bg-[var(--accent)]">
+          <button onClick={() => goMonth(1)} className="glass-card rounded-lg px-3 py-1.5 text-sm hover:bg-[var(--accent)]">
             &gt;
           </button>
-          <button onClick={goToday} className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm hover:bg-[var(--accent)]">
+          <button onClick={goToday} className="glass-card rounded-lg px-3 py-1.5 text-sm hover:bg-[var(--accent)]">
             오늘
           </button>
         </div>
-        <div className="flex rounded-lg border border-[var(--border)] overflow-hidden">
+        <div className="flex glass-card rounded-lg overflow-hidden">
           <button
             onClick={() => setViewMode("month")}
-            className={`px-3 py-1.5 text-sm ${viewMode === "month" ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "hover:bg-[var(--accent)]"}`}
+            className={`px-3 py-1.5 text-sm ${viewMode === "month" ? "glass-btn" : "hover:bg-[var(--accent)]"}`}
           >
             달력
           </button>
           <button
             onClick={() => setViewMode("list")}
-            className={`px-3 py-1.5 text-sm ${viewMode === "list" ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "hover:bg-[var(--accent)]"}`}
+            className={`px-3 py-1.5 text-sm ${viewMode === "list" ? "glass-btn" : "hover:bg-[var(--accent)]"}`}
           >
             목록
           </button>
@@ -163,7 +163,7 @@ export default function CalendarPage() {
         <p className="text-[var(--muted-foreground)]">일정 불러오는 중...</p>
       ) : viewMode === "month" ? (
         /* 월간 달력 뷰 */
-        <div className="rounded-lg border border-[var(--border)] overflow-hidden flex flex-col" style={{ height: `calc(100vh - 200px)` }}>
+        <div className="glass-card overflow-hidden flex flex-col" style={{ height: `calc(100vh - 200px)` }}>
           <div className="grid grid-cols-7 bg-[var(--muted)] shrink-0">
             {["일", "월", "화", "수", "목", "금", "토"].map((d) => (
               <div key={d} className={`px-2 py-2 text-center text-sm font-medium ${d === "일" ? "text-red-500" : d === "토" ? "text-blue-500" : ""}`}>
@@ -209,7 +209,7 @@ export default function CalendarPage() {
       ) : (
         /* 목록 뷰 */
         events.length === 0 ? (
-          <div className="rounded-lg border border-[var(--border)] p-8 text-center text-[var(--muted-foreground)]">
+          <div className="glass-card p-8 text-center text-[var(--muted-foreground)]">
             이번 달 일정이 없습니다.
           </div>
         ) : (
@@ -223,7 +223,7 @@ export default function CalendarPage() {
                   {dayEvents.map((e) => (
                     <div
                       key={e.id}
-                      className="rounded-lg border border-[var(--border)] p-3 hover:bg-[var(--accent)] transition-colors"
+                      className="glass-card p-3 hover:bg-[var(--accent)] transition-colors"
                     >
                       <div className="flex items-start justify-between">
                         <div>
@@ -251,7 +251,7 @@ export default function CalendarPage() {
       {selectedDay && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="fixed inset-0 bg-black/50" onClick={() => setSelectedDay(null)} />
-          <div className="relative z-50 w-full max-w-lg mx-4 rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xl">
+          <div className="glass-card relative z-50 w-full max-w-lg mx-4 rounded-xl shadow-2xl">
             {/* 헤더 */}
             <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-4">
               <h3 className="text-lg font-bold">{formatFullDate(selectedDay.date)}</h3>
@@ -270,7 +270,7 @@ export default function CalendarPage() {
               ) : (
                 <div className="space-y-3">
                   {selectedDay.events.map((e) => (
-                    <div key={e.id} className="rounded-lg border border-[var(--border)] p-4">
+                    <div key={e.id} className="glass-card p-4">
                       <div className="flex items-start justify-between mb-1">
                         <p className="font-bold text-base">{e.summary}</p>
                         <span className="shrink-0 ml-3 rounded bg-[var(--primary)]/10 px-2 py-0.5 text-xs font-medium text-[var(--primary)]">
@@ -292,14 +292,14 @@ export default function CalendarPage() {
             <div className="flex justify-end gap-2 border-t border-[var(--border)] px-5 py-3">
               <Link
                 href="/reservations/new"
-                className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-medium text-[var(--primary-foreground)] hover:opacity-90"
+                className="glass-btn rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90"
                 onClick={() => setSelectedDay(null)}
               >
                 + 예약 등록
               </Link>
               <button
                 onClick={() => setSelectedDay(null)}
-                className="rounded-lg border border-[var(--border)] px-4 py-2 text-sm hover:bg-[var(--accent)]"
+                className="glass-card rounded-lg px-4 py-2 text-sm hover:bg-[var(--accent)]"
               >
                 닫기
               </button>

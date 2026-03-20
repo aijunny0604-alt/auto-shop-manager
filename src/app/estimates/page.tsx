@@ -58,7 +58,7 @@ export default function EstimatesPage() {
         <h1 className="text-2xl font-bold">견적서 관리</h1>
         <Link
           href="/estimates/new"
-          className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-medium text-[var(--primary-foreground)]"
+          className="glass-btn rounded-lg px-4 py-2 text-sm font-medium"
         >
           + 견적서 작성
         </Link>
@@ -69,12 +69,12 @@ export default function EstimatesPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="고객명 또는 견적번호 검색..."
-          className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm"
+          className="glass-input flex-1 rounded-lg px-3 py-2 text-sm"
         />
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="rounded-lg border border-[var(--border)] bg-[var(--background)] px-3 py-2 text-sm"
+          className="glass-input rounded-lg px-3 py-2 text-sm"
         >
           <option value="">전체 상태</option>
           {Object.entries(ESTIMATE_STATUS_LABELS).map(([k, v]) => (
@@ -100,7 +100,7 @@ export default function EstimatesPage() {
           {estimates.map((est) => (
             <div
               key={est.id}
-              className="flex items-center gap-4 rounded-lg border border-[var(--border)] p-4 hover:bg-[var(--accent)]/50 transition-colors"
+              className="glass-card flex items-center gap-4 p-4 hover:bg-[var(--accent)]/50 transition-colors"
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">

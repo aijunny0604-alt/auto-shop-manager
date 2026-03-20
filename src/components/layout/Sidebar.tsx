@@ -16,12 +16,12 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-full w-64 flex-col border-r border-[var(--border)] bg-[var(--card)]">
-      <div className="flex h-14 items-center gap-2 border-b border-[var(--border)] px-4">
+    <aside className="glass flex h-full w-64 flex-col">
+      <div className="flex h-14 items-center gap-2 border-b border-[var(--glass-border)] px-4">
         <span className="text-xl">🔧</span>
-        <h1 className="text-lg font-bold">BIGS MOTORS</h1>
+        <h1 className="text-lg font-bold tracking-wide" style={{ color: '#d4b872' }}>BIGS MOTORS</h1>
         {onClose && (
-          <button onClick={onClose} className="ml-auto text-xl">
+          <button onClick={onClose} className="ml-auto text-xl text-[var(--muted-foreground)] hover:text-white transition-colors">
             ✕
           </button>
         )}
@@ -37,10 +37,10 @@ export function Sidebar({ onClose }: { onClose?: () => void }) {
               key={item.href}
               href={item.href}
               onClick={onClose}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
                 isActive
-                  ? "bg-[var(--primary)] text-[var(--primary-foreground)]"
-                  : "text-[var(--muted-foreground)] hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)]"
+                  ? "glass-btn"
+                  : "text-[var(--muted-foreground)] hover:bg-white/5 hover:text-[var(--foreground)]"
               }`}
             >
               <span>{item.icon}</span>

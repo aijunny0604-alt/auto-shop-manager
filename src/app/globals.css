@@ -1,56 +1,135 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --card: #ffffff;
-  --card-foreground: #171717;
-  --primary: #2563eb;
-  --primary-foreground: #ffffff;
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
-  --accent: #f1f5f9;
-  --accent-foreground: #0f172a;
+  --background: #151519;
+  --foreground: #ececef;
+  --card: rgba(255, 255, 255, 0.05);
+  --card-foreground: #ececef;
+  --primary: #d4b872;
+  --primary-foreground: #1a1a1e;
+  --secondary: rgba(255, 255, 255, 0.05);
+  --secondary-foreground: #ececef;
+  --muted: rgba(255, 255, 255, 0.05);
+  --muted-foreground: #9ca3af;
+  --accent: rgba(212, 184, 114, 0.1);
+  --accent-foreground: #ececef;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #2563eb;
-  --radius: 0.5rem;
-  --success: #22c55e;
-  --warning: #f59e0b;
-}
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.06);
+  --ring: #d4b872;
+  --radius: 0.625rem;
+  --success: #34d399;
+  --warning: #fbbf24;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --card: #171717;
-    --card-foreground: #ededed;
-    --primary: #3b82f6;
-    --primary-foreground: #ffffff;
-    --secondary: #1e293b;
-    --secondary-foreground: #f1f5f9;
-    --muted: #1e293b;
-    --muted-foreground: #94a3b8;
-    --accent: #1e293b;
-    --accent-foreground: #f1f5f9;
-    --destructive: #dc2626;
-    --destructive-foreground: #ffffff;
-    --border: #334155;
-    --input: #334155;
-    --ring: #3b82f6;
-    --success: #16a34a;
-    --warning: #d97706;
-  }
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  --glass-blur: blur(20px);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 80% 50% at 0% 0%, rgba(200, 169, 96, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(200, 169, 96, 0.05) 0%, transparent 50%),
+    var(--background);
+}
+
+/* Glassmorphism utility classes */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  border-radius: var(--radius);
+  transition: all 0.25s ease;
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(212, 184, 114, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: var(--foreground) !important;
+  transition: all 0.2s ease;
+}
+
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(212, 184, 114, 0.4) !important;
+  box-shadow: 0 0 0 2px rgba(212, 184, 114, 0.1) !important;
+  outline: none;
+}
+
+.glass-input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.glass-btn {
+  background: rgba(212, 184, 114, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(212, 184, 114, 0.5);
+  color: #1a1a1e;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.glass-btn:hover {
+  background: rgba(212, 184, 114, 1);
+  box-shadow: 0 2px 12px rgba(212, 184, 114, 0.2);
+}
+
+.glass-btn-outline {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--foreground);
+  transition: all 0.2s ease;
+}
+
+.glass-btn-outline:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.glass-btn-danger {
+  background: rgba(239, 68, 68, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fecaca;
+  transition: all 0.2s ease;
+}
+
+.glass-btn-danger:hover {
+  background: rgba(239, 68, 68, 0.75);
+  box-shadow: 0 2px 12px rgba(239, 68, 68, 0.15);
 }
 
 @media print {
