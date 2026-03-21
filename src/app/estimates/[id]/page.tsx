@@ -49,6 +49,70 @@ export default function EstimateDetailPage({
 
   const formatCurrency = (n: number) => n.toLocaleString("ko-KR") + "원";
 
+  const copyToClipboard = () => {
+    if (!estimate) return;
+
+    const lines: string[] = [];
+    lines.push("━━━━━━━━━━━━━━━━━━━━");
+    lines.push("  BIGS MOTORS 견적서");
+    lines.push("━━━━━━━━━━━━━━━━━━━━");
+    lines.push("");
+    lines.push(`📋 견적번호: ${estimate.estimateNo}`);
+    lines.push(`📅 작성일: ${new Date(estimate.createdAt).toLocaleDateString("ko-KR")}`);
+    if (estimate.validUntil) {
+      lines.push(`⏳ 유효기간: ${new Date(estimate.validUntil).toLocaleDateString("ko-KR")}`);
+    }
+    lines.push("");
+    lines.push(`👤 고객: ${estimate.customer?.name || "-"}`);
+    if (estimate.customer?.phone) lines.push(`📞 연락처: ${estimate.customer.phone}`);
+    if (estimate.vehicle) {
+      lines.push(`🚗 차량: ${estimate.vehicle.carModel}${estimate.vehicle.plateNumber ? ` (${estimate.vehicle.plateNumber})` : ""}`);
+    }
+    lines.push("");
+
+    const laborItems = estimate.items?.filter((i) => i.type === "LABOR") || [];
+    const partItems = estimate.items?.filter((i) => i.type === "PART") || [];
+
+    if (laborItems.length > 0) {
+      lines.push("【 공임 】");
+      laborItems.forEach((item) => {
+        lines.push(`  • ${item.name}  ${item.quantity}개 × ${item.unitPrice.toLocaleString()}원 = ${item.amount.toLocaleString()}원`);
+      });
+      lines.push("");
+    }
+
+    if (partItems.length > 0) {
+      lines.push("【 부품 】");
+      partItems.forEach((item) => {
+        lines.push(`  • ${item.name}  ${item.quantity}개 × ${item.unitPrice.toLocaleString()}원 = ${item.amount.toLocaleString()}원`);
+      });
+      lines.push("");
+    }
+
+    lines.push("────────────────────");
+    const subtotal = estimate.totalAmount + estimate.discount;
+    lines.push(`  소계: ${subtotal.toLocaleString()}원`);
+    if (estimate.discount > 0) {
+      lines.push(`  할인: -${estimate.discount.toLocaleString()}원`);
+    }
+    lines.push(`  💰 합계: ${estimate.totalAmount.toLocaleString()}원`);
+    lines.push("────────────────────");
+
+    if (estimate.memo) {
+      lines.push("");
+      lines.push(`📝 비고: ${estimate.memo}`);
+    }
+
+    lines.push("");
+    lines.push("BIGS MOTORS 오토샵");
+
+    navigator.clipboard.writeText(lines.join("\n")).then(() => {
+      addToast("견적서가 클립보드에 복사되었습니다.", "success");
+    }).catch(() => {
+      addToast("복사에 실패했습니다.", "error");
+    });
+  };
+
   if (loading) return <p className="text-center py-10 text-[var(--muted-foreground)]">로딩 중...</p>;
   if (!estimate) return <p className="text-center py-10">견적서를 찾을 수 없습니다.</p>;
 
@@ -65,6 +129,12 @@ export default function EstimateDetailPage({
           </p>
         </div>
         <div className="flex gap-2">
+          <button
+            onClick={copyToClipboard}
+            className="glass-btn-outline rounded-lg px-4 py-2 text-sm font-medium"
+          >
+            복사
+          </button>
           <Link
             href={`/estimates/${id}/print`}
             className="glass-btn rounded-lg px-4 py-2 text-sm font-medium"
