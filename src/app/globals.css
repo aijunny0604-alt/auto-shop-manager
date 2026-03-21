@@ -195,6 +195,13 @@ button, [role="button"], a, select, label[for], .cursor-pointer, [onclick] {
 
 * {
   cursor: default;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input, textarea, [contenteditable], pre, code {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 input, textarea, [contenteditable] {

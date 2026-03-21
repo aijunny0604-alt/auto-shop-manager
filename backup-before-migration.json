@@ -1,0 +1,108 @@
+{
+  "exportedAt": "2026-03-21T07:24:21.391Z",
+  "version": "1.0",
+  "data": {
+    "customers": [
+      {
+        "id": "cmmu42wda0002f19268lq0qjj",
+        "name": "테스트1",
+        "phone": "123412",
+        "memo": null,
+        "createdAt": "2026-03-17T04:27:40.510Z",
+        "updatedAt": "2026-03-17T04:27:40.510Z"
+      },
+      {
+        "id": "cmmzxpsyh00034dnl7grvz155",
+        "name": "테스트고객",
+        "phone": "010-9999-8888",
+        "memo": null,
+        "createdAt": "2026-03-21T06:16:08.921Z",
+        "updatedAt": "2026-03-21T06:16:08.921Z"
+      },
+      {
+        "id": "cmmzzuk7p000d4dnlv96gm5rn",
+        "name": "테스트",
+        "phone": "123124",
+        "memo": null,
+        "createdAt": "2026-03-21T07:15:50.101Z",
+        "updatedAt": "2026-03-21T07:15:50.101Z"
+      }
+    ],
+    "vehicles": [],
+    "serviceRecords": [],
+    "servicePartUsed": [],
+    "inventoryItems": [
+      {
+        "id": "cmmu41hzy0000f192cfcqm2h6",
+        "name": "엔진오일 1L",
+        "category": "엔진오일",
+        "quantity": 2,
+        "minQuantity": 5,
+        "unitPrice": 0,
+        "location": "타이어 창고",
+        "memo": "dd",
+        "createdAt": "2026-03-17T04:26:35.031Z",
+        "updatedAt": "2026-03-17T04:26:35.031Z"
+      }
+    ],
+    "stockLogs": [],
+    "reservations": [
+      {
+        "id": "cmmu42woo0004f192ikwlgzqz",
+        "customerId": "cmmu42wda0002f19268lq0qjj",
+        "vehicleId": null,
+        "scheduledAt": "2026-03-18T23:28:00.000Z",
+        "duration": 60,
+        "serviceType": "튜닝",
+        "description": "오일교체",
+        "status": "PENDING",
+        "calendarEventId": "ns8dnu1lrqfr118tdkpsnj301c",
+        "memo": null,
+        "createdAt": "2026-03-17T04:27:40.921Z",
+        "updatedAt": "2026-03-17T04:27:44.701Z"
+      }
+    ],
+    "estimates": [
+      {
+        "id": "cmmzzukpm000f4dnln195ba8a",
+        "estimateNo": "EST-20260321-001",
+        "customerId": "cmmzzuk7p000d4dnlv96gm5rn",
+        "vehicleId": null,
+        "status": "DRAFT",
+        "validUntil": null,
+        "totalAmount": 0,
+        "discount": 0,
+        "memo": null,
+        "createdAt": "2026-03-21T07:15:50.747Z",
+        "updatedAt": "2026-03-21T07:15:50.747Z"
+      }
+    ],
+    "estimateItems": [
+      {
+        "id": "cmmzzukpn000g4dnlwx5xycag",
+        "estimateId": "cmmzzukpm000f4dnln195ba8a",
+        "type": "LABOR",
+        "name": "엔진 ",
+        "inventoryItemId": null,
+        "quantity": 1,
+        "unitPrice": 0,
+        "amount": 0,
+        "memo": null,
+        "sortOrder": 0
+      },
+      {
+        "id": "cmmzzukpn000h4dnli03mnljh",
+        "estimateId": "cmmzzukpm000f4dnln195ba8a",
+        "type": "LABOR",
+        "name": "ㅇㄴㅁㅇ",
+        "inventoryItemId": null,
+        "quantity": 1,
+        "unitPrice": 0,
+        "amount": 0,
+        "memo": null,
+        "sortOrder": 1
+      }
+    ],
+    "importHistories": []
+  }
+}

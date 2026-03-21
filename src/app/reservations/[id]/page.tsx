@@ -49,7 +49,7 @@ export default function ReservationDetailPage() {
   if (!reservation) return <p>예약을 찾을 수 없습니다.</p>;
 
   return (
-    <div className="max-w-xl">
+    <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">예약 상세</h1>
         <div className="flex gap-2">

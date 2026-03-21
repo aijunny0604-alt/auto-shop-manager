@@ -130,7 +130,7 @@ export default function NewReservationPage() {
   const errorClass = "text-xs text-[var(--destructive)] mt-1";
 
   return (
-    <div className="max-w-xl">
+    <div>
       <h1 className="text-2xl font-bold mb-6">예약 등록</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* 고객 자동완성 */}

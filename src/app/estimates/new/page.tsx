@@ -133,7 +133,7 @@ export default function NewEstimatePage() {
   const inputClass = "glass-input w-full rounded-lg px-3 py-2 text-sm";
 
   return (
-    <div className="max-w-3xl">
+    <div>
       <h1 className="text-2xl font-bold mb-6">견적서 작성</h1>
 
       <div className="space-y-4">

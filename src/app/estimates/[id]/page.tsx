@@ -54,7 +54,7 @@ export default function EstimateDetailPage({
 
     const lines: string[] = [];
     lines.push("━━━━━━━━━━━━━━━━━━━━");
-    lines.push("  BIGS MOTORS 견적서");
+    lines.push("   BIGS MOTORS 견적서");
     lines.push("━━━━━━━━━━━━━━━━━━━━");
     lines.push("");
     lines.push(`📋 견적번호: ${estimate.estimateNo}`);
@@ -104,7 +104,7 @@ export default function EstimateDetailPage({
     }
 
     lines.push("");
-    lines.push("BIGS MOTORS 오토샵");
+    lines.push("BIGS MOTORS");
 
     navigator.clipboard.writeText(lines.join("\n")).then(() => {
       addToast("견적서가 클립보드에 복사되었습니다.", "success");
@@ -120,7 +120,7 @@ export default function EstimateDetailPage({
   const partItems = estimate.items?.filter((i) => i.type === "PART") || [];
 
   return (
-    <div className="max-w-3xl">
+    <div>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold">{estimate.estimateNo}</h1>
