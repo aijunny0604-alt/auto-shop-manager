@@ -188,7 +188,7 @@ export default function SettingsPage() {
     <div>
       <h1 className="text-2xl font-bold mb-6">설정</h1>
 
-      <div className="max-w-2xl space-y-6">
+      <div className="space-y-6">
         {/* ── Google 계정 연동 ── */}
         <section className="glass-card p-6">
           <h2 className="text-lg font-semibold mb-1">Google 계정 연동</h2>
