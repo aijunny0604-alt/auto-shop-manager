@@ -50,6 +50,7 @@ export async function POST(request: NextRequest) {
           carModel: vehicle.carModel,
           year: vehicle.year || null,
           plateNumber: vehicle.plateNumber || null,
+          vin: vehicle.vin || null,
           mileage: vehicle.mileage || null,
           memo: vehicle.memo || null,
         },

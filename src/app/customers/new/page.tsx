@@ -18,6 +18,7 @@ export default function NewCustomerPage() {
     carModel: "",
     year: "",
     plateNumber: "",
+    vin: "",
     mileage: "",
     memo: "",
   });
@@ -38,6 +39,7 @@ export default function NewCustomerPage() {
           carModel: vehicleData.carModel.trim(),
           year: vehicleData.year ? parseInt(vehicleData.year) : null,
           plateNumber: vehicleData.plateNumber || null,
+          vin: vehicleData.vin || null,
           mileage: vehicleData.mileage ? parseInt(vehicleData.mileage) : null,
           memo: vehicleData.memo || null,
         };
@@ -64,29 +66,34 @@ export default function NewCustomerPage() {
 
   const inputClass = "glass-input w-full rounded-lg px-3 py-2 text-sm";
   const errorClass = "text-xs text-[var(--destructive)] mt-1";
+  const labelClass = "block text-xs text-[var(--muted-foreground)] mb-1";
 
   return (
-    <div>
+    <div className="max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">고객 등록</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">고객명 *</label>
-          <input {...register("name")} className={inputClass} />
-          {errors.name && <p className={errorClass}>{errors.name.message}</p>}
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">연락처</label>
-          <input
-            {...register("phone")}
-            type="tel"
-            placeholder="010-0000-0000"
-            className={inputClass}
-          />
-          {errors.phone && <p className={errorClass}>{errors.phone.message}</p>}
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">메모</label>
-          <textarea {...register("memo")} rows={3} className={inputClass} />
+        <div className="glass-card p-5 space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">고객명 *</label>
+              <input {...register("name")} className={inputClass} />
+              {errors.name && <p className={errorClass}>{errors.name.message}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">연락처</label>
+              <input
+                {...register("phone")}
+                type="tel"
+                placeholder="010-0000-0000"
+                className={inputClass}
+              />
+              {errors.phone && <p className={errorClass}>{errors.phone.message}</p>}
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">메모</label>
+            <textarea {...register("memo")} rows={2} placeholder="고객 메모" className={inputClass} />
+          </div>
         </div>
 
         {/* 차량 정보 */}
@@ -103,20 +110,41 @@ export default function NewCustomerPage() {
         </div>
 
         {addVehicle && (
-          <div className="glass-card p-4 space-y-3 bg-[var(--accent)]/30">
+          <div className="glass-card p-5 space-y-4">
             <p className="text-sm font-medium">🚗 차량 정보</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className={labelClass}>차종 *</label>
+                <input
+                  value={vehicleData.carModel}
+                  onChange={(e) => setVehicleData({ ...vehicleData, carModel: e.target.value })}
+                  placeholder="예: 소나타, K5, 아반떼"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className={labelClass}>번호판</label>
+                <input
+                  value={vehicleData.plateNumber}
+                  onChange={(e) => setVehicleData({ ...vehicleData, plateNumber: e.target.value })}
+                  placeholder="예: 12가 3456"
+                  className={inputClass}
+                />
+              </div>
+            </div>
             <div>
-              <label className="block text-xs text-[var(--muted-foreground)] mb-1">차종 *</label>
+              <label className={labelClass}>차대번호 (VIN)</label>
               <input
-                value={vehicleData.carModel}
-                onChange={(e) => setVehicleData({ ...vehicleData, carModel: e.target.value })}
-                placeholder="예: 소나타, K5, 아반떼"
+                value={vehicleData.vin}
+                onChange={(e) => setVehicleData({ ...vehicleData, vin: e.target.value })}
+                placeholder="예: KMHD341DBNU123456"
+                maxLength={17}
                 className={inputClass}
               />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs text-[var(--muted-foreground)] mb-1">연식</label>
+                <label className={labelClass}>연식</label>
                 <input
                   type="number"
                   value={vehicleData.year}
@@ -128,18 +156,7 @@ export default function NewCustomerPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-[var(--muted-foreground)] mb-1">번호판</label>
-                <input
-                  value={vehicleData.plateNumber}
-                  onChange={(e) => setVehicleData({ ...vehicleData, plateNumber: e.target.value })}
-                  placeholder="예: 12가 3456"
-                  className={inputClass}
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs text-[var(--muted-foreground)] mb-1">주행거리 (km)</label>
+                <label className={labelClass}>주행거리 (km)</label>
                 <input
                   type="number"
                   value={vehicleData.mileage}
@@ -150,7 +167,7 @@ export default function NewCustomerPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs text-[var(--muted-foreground)] mb-1">차량 메모</label>
+                <label className={labelClass}>차량 메모</label>
                 <input
                   value={vehicleData.memo}
                   onChange={(e) => setVehicleData({ ...vehicleData, memo: e.target.value })}
@@ -162,18 +179,18 @@ export default function NewCustomerPage() {
           </div>
         )}
 
-        <div className="flex gap-3">
+        <div className="flex gap-3 pt-2">
           <button
             type="submit"
             disabled={isSubmitting}
-            className="glass-btn rounded-lg px-6 py-2 text-sm font-medium disabled:opacity-50"
+            className="glass-btn rounded-lg px-6 py-2.5 text-sm font-medium disabled:opacity-50"
           >
             {isSubmitting ? "등록 중..." : "등록"}
           </button>
           <button
             type="button"
             onClick={() => router.back()}
-            className="glass-card rounded-lg px-6 py-2 text-sm hover:bg-[var(--accent)]"
+            className="glass-card rounded-lg px-6 py-2.5 text-sm hover:bg-[var(--accent)]"
           >
             취소
           </button>

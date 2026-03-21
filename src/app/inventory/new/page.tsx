@@ -43,11 +43,11 @@ export default function NewInventoryPage() {
   const errorClass = "text-xs text-[var(--destructive)] mt-1";
 
   return (
-    <div>
+    <div className="max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">부품 등록</h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
+        <div className="max-w-2xl mx-auto">
           <label className="block text-sm font-medium mb-1">부품명 *</label>
           <input
             {...register("name")}
@@ -57,7 +57,7 @@ export default function NewInventoryPage() {
           {errors.name && <p className={errorClass}>{errors.name.message}</p>}
         </div>
 
-        <div>
+        <div className="max-w-2xl mx-auto">
           <label className="block text-sm font-medium mb-1">카테고리 *</label>
           <input
             {...register("category")}
@@ -75,7 +75,7 @@ export default function NewInventoryPage() {
         </div>
 
         <div className="grid grid-cols-3 gap-3">
-          <div>
+          <div className="max-w-2xl mx-auto">
             <label className="block text-sm font-medium mb-1">초기 수량</label>
             <input
               {...register("quantity", { valueAsNumber: true })}
@@ -85,7 +85,7 @@ export default function NewInventoryPage() {
             />
             {errors.quantity && <p className={errorClass}>{errors.quantity.message}</p>}
           </div>
-          <div>
+          <div className="max-w-2xl mx-auto">
             <label className="block text-sm font-medium mb-1">최소 수량</label>
             <input
               {...register("minQuantity", { valueAsNumber: true })}
@@ -94,7 +94,7 @@ export default function NewInventoryPage() {
               className={inputClass}
             />
           </div>
-          <div>
+          <div className="max-w-2xl mx-auto">
             <label className="block text-sm font-medium mb-1">단가 (원)</label>
             <input
               {...register("unitPrice", { valueAsNumber: true })}
@@ -105,7 +105,7 @@ export default function NewInventoryPage() {
           </div>
         </div>
 
-        <div>
+        <div className="max-w-2xl mx-auto">
           <label className="block text-sm font-medium mb-1">보관 위치</label>
           <input
             {...register("location")}
@@ -114,7 +114,7 @@ export default function NewInventoryPage() {
           />
         </div>
 
-        <div>
+        <div className="max-w-2xl mx-auto">
           <label className="block text-sm font-medium mb-1">메모</label>
           <textarea {...register("memo")} rows={3} className={inputClass} />
         </div>

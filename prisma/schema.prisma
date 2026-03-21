@@ -65,6 +65,7 @@ model Vehicle {
   carModel    String
   year        Int?
   plateNumber String?
+  vin         String?
   mileage     Int?
   memo        String?
   createdAt   DateTime @default(now())

@@ -133,12 +133,12 @@ export default function NewEstimatePage() {
   const inputClass = "glass-input w-full rounded-lg px-3 py-2 text-sm";
 
   return (
-    <div>
+    <div className="max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">견적서 작성</h1>
 
       <div className="space-y-4">
         {/* 고객 선택 */}
-        <div>
+        <div className="max-w-2xl mx-auto">
           <label className="block text-sm font-medium mb-1">고객 *</label>
           <CustomerAutocomplete
             selectedCustomer={selectedCustomer}
@@ -171,7 +171,7 @@ export default function NewEstimatePage() {
             <p className="text-sm font-medium text-[var(--primary)]">
               신규 고객: {newCustomerName || customerQuery.trim()}
             </p>
-            <div>
+            <div className="max-w-2xl mx-auto">
               <label className="block text-xs text-[var(--muted-foreground)] mb-1">
                 전화번호 (선택)
               </label>
@@ -188,7 +188,7 @@ export default function NewEstimatePage() {
 
         {/* 차량 선택 */}
         {vehicles.length > 0 && (
-          <div>
+          <div className="max-w-2xl mx-auto">
             <label className="block text-sm font-medium mb-1">차량</label>
             <select
               value={vehicleId}
@@ -206,7 +206,7 @@ export default function NewEstimatePage() {
         )}
 
         {/* 항목 목록 */}
-        <div>
+        <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-2">
             <label className="text-sm font-medium">항목 *</label>
             <div className="flex gap-2">
@@ -283,7 +283,7 @@ export default function NewEstimatePage() {
                   )}
                 </div>
                 <div className="grid grid-cols-3 gap-2">
-                  <div>
+                  <div className="max-w-2xl mx-auto">
                     <label className="block text-xs text-[var(--muted-foreground)]">수량</label>
                     <input
                       type="number"
@@ -293,7 +293,7 @@ export default function NewEstimatePage() {
                       className={inputClass}
                     />
                   </div>
-                  <div>
+                  <div className="max-w-2xl mx-auto">
                     <label className="block text-xs text-[var(--muted-foreground)]">단가 (원)</label>
                     <input
                       type="number"
@@ -303,7 +303,7 @@ export default function NewEstimatePage() {
                       className={inputClass}
                     />
                   </div>
-                  <div>
+                  <div className="max-w-2xl mx-auto">
                     <label className="block text-xs text-[var(--muted-foreground)]">금액</label>
                     <p className="px-3 py-2 text-sm font-medium">
                       {formatCurrency(item.quantity * item.unitPrice)}원
@@ -339,7 +339,7 @@ export default function NewEstimatePage() {
 
         {/* 메모 & 유효기간 */}
         <div className="grid grid-cols-2 gap-3">
-          <div>
+          <div className="max-w-2xl mx-auto">
             <label className="block text-sm font-medium mb-1">유효기간</label>
             <input
               type="date"
@@ -348,7 +348,7 @@ export default function NewEstimatePage() {
               className={inputClass}
             />
           </div>
-          <div>
+          <div className="max-w-2xl mx-auto">
             <label className="block text-sm font-medium mb-1">비고</label>
             <input
               value={memo}

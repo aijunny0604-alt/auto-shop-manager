@@ -130,11 +130,11 @@ export default function NewReservationPage() {
   const errorClass = "text-xs text-[var(--destructive)] mt-1";
 
   return (
-    <div>
+    <div className="max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">예약 등록</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* 고객 자동완성 */}
-        <div>
+        <div className="max-w-2xl mx-auto">
           <label className="block text-sm font-medium mb-1">고객 *</label>
           <CustomerAutocomplete
             selectedCustomer={selectedCustomer}
@@ -169,7 +169,7 @@ export default function NewReservationPage() {
             <p className="text-sm font-medium text-[var(--primary)]">
               신규 고객: {newCustomerName || customerQuery.trim()}
             </p>
-            <div>
+            <div className="max-w-2xl mx-auto">
               <label className="block text-xs text-[var(--muted-foreground)] mb-1">
                 전화번호 (선택)
               </label>
@@ -186,7 +186,7 @@ export default function NewReservationPage() {
 
         {/* 차량 선택 (기존 고객) */}
         {selectedCustomer && (
-          <div>
+          <div className="max-w-2xl mx-auto">
             <label className="block text-sm font-medium mb-1">차량</label>
             {vehicles.length > 0 ? (
               <select {...register("vehicleId")} className={inputClass}>
@@ -221,7 +221,7 @@ export default function NewReservationPage() {
         {addNewVehicle && (
           <div className="glass-card p-4 space-y-3">
             <p className="text-sm font-medium">🚗 차량 정보</p>
-            <div>
+            <div className="max-w-2xl mx-auto">
               <label className="block text-xs text-[var(--muted-foreground)] mb-1">차종 *</label>
               <input
                 value={newVehicle.carModel}
@@ -231,7 +231,7 @@ export default function NewReservationPage() {
               />
             </div>
             <div className="grid grid-cols-3 gap-3">
-              <div>
+              <div className="max-w-2xl mx-auto">
                 <label className="block text-xs text-[var(--muted-foreground)] mb-1">연식</label>
                 <input
                   type="number"
@@ -243,7 +243,7 @@ export default function NewReservationPage() {
                   className={inputClass}
                 />
               </div>
-              <div>
+              <div className="max-w-2xl mx-auto">
                 <label className="block text-xs text-[var(--muted-foreground)] mb-1">번호판</label>
                 <input
                   value={newVehicle.plateNumber}
@@ -252,7 +252,7 @@ export default function NewReservationPage() {
                   className={inputClass}
                 />
               </div>
-              <div>
+              <div className="max-w-2xl mx-auto">
                 <label className="block text-xs text-[var(--muted-foreground)] mb-1">주행거리</label>
                 <input
                   type="number"
@@ -268,7 +268,7 @@ export default function NewReservationPage() {
         )}
 
         <div className="grid grid-cols-2 gap-3">
-          <div>
+          <div className="max-w-2xl mx-auto">
             <label className="block text-sm font-medium mb-1">예약 일시 *</label>
             <input
               {...register("scheduledAt")}
@@ -277,7 +277,7 @@ export default function NewReservationPage() {
             />
             {errors.scheduledAt && <p className={errorClass}>{errors.scheduledAt.message}</p>}
           </div>
-          <div>
+          <div className="max-w-2xl mx-auto">
             <label className="block text-sm font-medium mb-1">소요 시간 (분)</label>
             <input
               {...register("duration", { valueAsNumber: true })}
@@ -289,7 +289,7 @@ export default function NewReservationPage() {
           </div>
         </div>
 
-        <div>
+        <div className="max-w-2xl mx-auto">
           <label className="block text-sm font-medium mb-1">작업 유형 *</label>
           <select {...register("serviceType")} className={inputClass}>
             {SERVICE_TYPES.map((t) => (
@@ -301,7 +301,7 @@ export default function NewReservationPage() {
           {errors.serviceType && <p className={errorClass}>{errors.serviceType.message}</p>}
         </div>
 
-        <div>
+        <div className="max-w-2xl mx-auto">
           <label className="block text-sm font-medium mb-1">작업 내용/요청사항</label>
           <textarea
             {...register("description")}
@@ -311,7 +311,7 @@ export default function NewReservationPage() {
           />
         </div>
 
-        <div>
+        <div className="max-w-2xl mx-auto">
           <label className="block text-sm font-medium mb-1">메모</label>
           <textarea {...register("memo")} rows={2} className={inputClass} />
         </div>
