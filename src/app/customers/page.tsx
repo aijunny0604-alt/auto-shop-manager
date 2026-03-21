@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import { fetchCustomers } from "@/features/customers/api";
 import type { Customer } from "@/types/customer";
@@ -9,21 +9,28 @@ export default function CustomersPage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
 
-  const load = async () => {
+  const load = useCallback(async (query: string) => {
     setLoading(true);
     try {
-      const data = await fetchCustomers(search);
+      const data = await fetchCustomers(query);
       setCustomers(data);
     } catch {
       setCustomers([]);
     }
     setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
-    load();
-  }, []);
+    load("");
+  }, [load]);
+
+  const handleSearch = (value: string) => {
+    setSearch(value);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => load(value), 300);
+  };
 
   return (
     <div>
@@ -45,21 +52,15 @@ export default function CustomersPage() {
         </div>
       </div>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          load();
-        }}
-        className="mb-4"
-      >
+      <div className="mb-4">
         <input
           type="text"
-          placeholder="고객명 또는 전화번호 검색..."
+          placeholder="고객명, 전화번호, 차량번호, 차종으로 검색..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="glass-input w-full max-w-md rounded-lg px-3 py-2 text-sm"
+          onChange={(e) => handleSearch(e.target.value)}
+          className="glass-input w-full max-w-lg rounded-lg px-3 py-2 text-sm"
         />
-      </form>
+      </div>
 
       {loading ? (
         <p className="text-[var(--muted-foreground)]">로딩 중...</p>
@@ -79,6 +80,15 @@ export default function CustomersPage() {
               <p className="text-sm text-[var(--muted-foreground)] truncate">
                 {c.phone || "연락처 없음"}
               </p>
+              {c.vehicles && c.vehicles.length > 0 && (
+                <div className="mt-2 space-y-0.5">
+                  {c.vehicles.map((v: { carModel: string; plateNumber?: string | null }, i: number) => (
+                    <p key={i} className="text-xs text-[var(--muted-foreground)] truncate">
+                      🚗 {v.carModel}{v.plateNumber ? ` (${v.plateNumber})` : ""}
+                    </p>
+                  ))}
+                </div>
+              )}
               <div className="flex gap-3 mt-2 text-xs text-[var(--muted-foreground)]">
                 <span>차량 {c._count?.vehicles ?? 0}</span>
                 <span>예약 {c._count?.reservations ?? 0}</span>

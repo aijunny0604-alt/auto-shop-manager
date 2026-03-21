@@ -13,12 +13,15 @@ export async function GET(request: NextRequest) {
           OR: [
             { name: { contains: search } },
             { phone: { contains: search } },
+            { vehicles: { some: { plateNumber: { contains: search } } } },
+            { vehicles: { some: { carModel: { contains: search } } } },
           ],
         }
       : {},
     orderBy: { updatedAt: "desc" },
-    take: search ? 15 : 100,
+    take: search ? 30 : 100,
     include: {
+      vehicles: { select: { carModel: true, plateNumber: true }, take: 3 },
       _count: { select: { vehicles: true, reservations: true } },
     },
   });
