@@ -193,7 +193,7 @@ button, [role="button"], a, select, label[for], .cursor-pointer, [onclick] {
   cursor: pointer !important;
 }
 
-h1, h2, h3, h4, h5, h6, p, span, label, th, td, li, nav, aside, header, footer, div {
+* {
   cursor: default;
 }
 
