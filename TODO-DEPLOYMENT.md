@@ -1,96 +1,80 @@
-# Auto Shop Manager - Vercel 배포 TODO
+# BIGS MOTORS 오토샵 매니저 - 배포/개발 이력
 
-## 현재 상태
-- [x] GitHub 저장소 push 완료
-- [x] Google OAuth 설정 완료 (테스트 사용자: aijunny0604@gmail.com)
-- [x] 로컬 개발 환경 정상 작동 (localhost:3000)
-- [ ] 클라우드 DB 마이그레이션
-- [ ] Vercel 배포
+## 완료된 작업
 
----
+### 1단계: Supabase 설정 (DB 마이그레이션) ✅
+- [x] Supabase 프로젝트 생성
+- [x] Prisma provider: SQLite → PostgreSQL 변경
+- [x] Session Pooler 연결 (IPv4 호환)
+- [x] prisma migrate dev 실행 (10개 테이블 생성)
+- [x] .env.local / .env 환경변수 설정
 
-## 1단계: Supabase 설정 (DB 마이그레이션)
+### 2단계: Vercel 배포 ✅
+- [x] Vercel 프로젝트 생성 (bigs-motors-manager)
+- [x] GitHub 저장소 연결 (auto-shop-manager)
+- [x] 환경변수 5개 설정
+- [x] [deploy] 키워드 배포 제어 설정
+- [x] 배포 성공 확인
 
-### 1-1. Supabase 프로젝트 생성
-- [ ] https://supabase.com 가입/로그인
-- [ ] New Project 생성 (Region: Northeast Asia - ap-northeast-1)
-- [ ] Project URL, anon key, service_role key 메모
+### 3단계: 사이트명 변경 ✅
+- [x] "BIGS MOTORS 오토샵 매니저" 적용
 
-### 1-2. 테이블 생성 (현재 Prisma 스키마 기준)
-- [ ] customers 테이블
-- [ ] vehicles 테이블
-- [ ] reservations 테이블
-- [ ] inventory 테이블
-- [ ] stock_history 테이블
+### 4단계: Google Calendar 연동 ✅
+- [x] OAuth 설정 + 토큰 DB 저장 방식 적용
+- [x] 설정 페이지에서 계정 변경/해제 기능 추가
 
-### 1-3. 코드 수정
-- [ ] `prisma` 제거 → `@supabase/supabase-js` 설치
-- [ ] `src/lib/supabase.ts` 클라이언트 생성
-- [ ] 모든 API 라우트 Prisma → Supabase 쿼리로 변경
-  - [ ] `/api/customers/*`
-  - [ ] `/api/reservations/*`
-  - [ ] `/api/inventory/*`
-  - [ ] `/api/dashboard/stats`
-- [ ] `.env.local`에 Supabase 환경변수 추가
+### 5단계: 성능 최적화 ✅
+- [x] DB 인덱스 7개 추가
+- [x] 대시보드 API: DB 레벨 필터링 + 병렬 쿼리
+- [x] Prisma 싱글턴 사용
 
----
+### 6단계: Glassmorphism 다크 테마 ✅
+- [x] 프리미엄 다크 테마 적용
 
-## 2단계: Vercel 배포
+### 7단계: 견적서 시스템 ✅
+- [x] 견적서 CRUD (생성/조회/수정/삭제)
+- [x] 견적번호 자동 생성 (EST-YYYYMMDD-NNN)
+- [x] 공임/부품 항목 관리, 할인, 인쇄용 페이지
+- [x] 신규 고객 인라인 등록 지원
 
-### 2-1. Vercel 프로젝트 연결
-- [ ] https://vercel.com 가입 (GitHub 계정 연동)
-- [ ] "Import Project" → GitHub 저장소 선택
-- [ ] Framework: Next.js 자동 감지
+### 8단계: 매출 관리 ✅ (2026-03-21)
+- [x] 매출 API (기간별/유형별 집계)
+- [x] 매출 대시보드 (요약 카드 4개 + CSS 차트 + 유형별 테이블)
+- [x] 기간 필터 (오늘/이번주/이번달/3개월/직접입력)
 
-### 2-2. 환경변수 설정 (Vercel Dashboard > Settings > Environment Variables)
-- [ ] `NEXT_PUBLIC_SUPABASE_URL` = Supabase 프로젝트 URL
-- [ ] `NEXT_PUBLIC_SUPABASE_ANON_KEY` = Supabase anon key
-- [ ] `SUPABASE_SERVICE_ROLE_KEY` = Supabase service role key
-- [ ] `GOOGLE_CLIENT_ID` = 현재 .env.local 값 그대로
-- [ ] `GOOGLE_CLIENT_SECRET` = 현재 .env.local 값 그대로
-- [ ] `GOOGLE_REDIRECT_URI` = `https://your-app.vercel.app/api/auth/google/callback`
-- [ ] `GOOGLE_SHEET_ID` = Google Sheets ID (선택)
+### 9단계: 검색/필터 강화 ✅ (2026-03-21)
+- [x] 예약: 날짜 범위 + 상태 + 서비스 유형 필터
+- [x] 견적서: 날짜 범위 필터
+- [x] 재고: 카테고리 + 재고 부족만 체크박스
+- [x] 고객: 이름 + 전화번호 통합 OR 검색
 
-### 2-3. Google Cloud Console 수정
-- [ ] OAuth 승인된 리디렉션 URI에 Vercel 도메인 추가
-  - `https://your-app.vercel.app/api/auth/google/callback`
-- [ ] 테스트 사용자에 실사용 이메일 추가 (필요시)
+### 10단계: 데이터 백업/복원 ✅ (2026-03-21)
+- [x] JSON 내보내기 (전체 10개 테이블)
+- [x] JSON 복원 (트랜잭션 기반, 기존 데이터 삭제 후 삽입)
+- [x] 설정/백업 페이지 UI
 
-### 2-4. 배포 확인
-- [ ] Vercel 자동 빌드 성공 확인
-- [ ] 사이트 접속 확인 (`https://your-app.vercel.app`)
-- [ ] Google Calendar 연동 테스트
-- [ ] 예약 CRUD 테스트
-- [ ] 고객 등록/검색 테스트
-- [ ] 재고 관리 테스트
+### 11단계: UX 개선 ✅ (2026-03-21)
+- [x] 카드 클릭 → 상세 페이지 이동 (견적서, 예약, 고객, 재고)
+- [x] 호버 애니메이션 (translateY + 그림자 강화)
+- [x] 전체 cursor: pointer / cursor: default 통일
+- [x] 텍스트 커서 깜빡임 제거
+- [x] 사이드바에 매출 관리, 설정/백업 메뉴 추가
 
----
-
-## 3단계: Google OAuth 토큰 저장 방식 변경
-
-현재 토큰이 `prisma/google-token.json` 파일에 저장됨 → Vercel에서는 파일 저장 불가
-
-- [ ] 토큰 저장소를 Supabase `google_tokens` 테이블로 변경
-- [ ] `src/lib/google-calendar.ts` 수정 (파일 → DB 저장/로드)
-- [ ] refresh token 자동 갱신 로직 확인
+### 12단계: 서울 리전 마이그레이션 ✅ (2026-03-21)
+- [x] Supabase: 호주(ap-southeast-2) → 서울(ap-northeast-2) 이전
+- [x] 데이터 백업 → 복원 완료
+- [x] API 응답 속도: 평균 0.83s → 0.23s (4배 향상)
+- [x] Vercel 함수 리전: 미국 → 서울(icn1)
+- [x] vercel.json regions 설정
 
 ---
 
-## 참고사항
+## Supabase 정보
+- 프로젝트: BIGS MOTORS AUTO Manager
+- 프로젝트ID: hhddzuyfoalrgbwokbfs
+- Region: ap-northeast-2 (서울)
 
-### 예상 소요 시간
-- Supabase 설정 + DB 마이그레이션: 1~2시간
-- Vercel 배포 + 환경변수: 30분
-- Google OAuth 수정 + 토큰 저장 변경: 1시간
-- 테스트: 30분
-
-### 무료 플랜 한도
-| 서비스 | 무료 제공 | 비고 |
-|--------|-----------|------|
-| Vercel | 월 100GB 대역폭 | 개인 사용 충분 |
-| Supabase | DB 500MB, 월 5만 API | 1주 비활성 시 일시정지 |
-| Google API | 무료 (일일 쿼터) | 소규모 사용 여유 |
-
-### 현재 로컬 데이터
-- SQLite DB 경로: `prisma/dev.db`
-- 기존 고객/예약 데이터는 Supabase로 수동 이관 필요 (또는 새로 입력)
+## Google OAuth 정보
+- Google Cloud 프로젝트: auto
+- 테스트 사용자: aijunny0604@gmail.com
+- 설정 페이지에서 계정 변경/해제 가능
