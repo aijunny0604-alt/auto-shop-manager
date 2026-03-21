@@ -103,8 +103,6 @@ export default function EstimateDetailPage({
       lines.push(`📝 비고: ${estimate.memo}`);
     }
 
-    lines.push("");
-    lines.push("BIGS MOTORS");
 
     navigator.clipboard.writeText(lines.join("\n")).then(() => {
       addToast("견적서가 클립보드에 복사되었습니다.", "success");
