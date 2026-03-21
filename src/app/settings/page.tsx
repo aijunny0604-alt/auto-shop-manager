@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 interface BackupPreview {
   exportedAt: string;
@@ -22,11 +23,13 @@ const TABLE_LABELS: Record<string, string> = {
 };
 
 export default function SettingsPage() {
+  const router = useRouter();
   const [lastBackup, setLastBackup] = useState<string | null>(null);
   const [backupLoading, setBackupLoading] = useState(false);
   const [googleConnected, setGoogleConnected] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(true);
   const [disconnecting, setDisconnecting] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   const [preview, setPreview] = useState<BackupPreview | null>(null);
   const [fileName, setFileName] = useState<string>("");
@@ -361,6 +364,25 @@ export default function SettingsPage() {
               {restoreResult.message}
             </div>
           )}
+        </section>
+
+        {/* ── 로그아웃 ── */}
+        <section className="glass-card p-6">
+          <h2 className="text-lg font-semibold mb-1">로그아웃</h2>
+          <p className="text-sm text-[var(--muted-foreground)] mb-4">
+            현재 세션을 종료하고 로그인 화면으로 돌아갑니다.
+          </p>
+          <button
+            onClick={async () => {
+              setLoggingOut(true);
+              await fetch("/api/auth/logout", { method: "POST" });
+              router.push("/login");
+            }}
+            disabled={loggingOut}
+            className="glass-btn-outline rounded-lg px-5 py-2.5 text-sm font-medium disabled:opacity-50"
+          >
+            {loggingOut ? "로그아웃 중..." : "로그아웃"}
+          </button>
         </section>
       </div>
     </div>

@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { MobileNav } from "./MobileNav";
@@ -9,6 +11,43 @@ import { useAppStore } from "@/store/useAppStore";
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const sidebarOpen = useAppStore((s) => s.sidebarOpen);
   const setSidebarOpen = useAppStore((s) => s.setSidebarOpen);
+  const pathname = usePathname();
+  const router = useRouter();
+  const [authChecked, setAuthChecked] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false);
+
+  const isLoginPage = pathname === "/login";
+
+  useEffect(() => {
+    if (isLoginPage) {
+      setAuthChecked(true);
+      return;
+    }
+
+    fetch("/api/auth/check")
+      .then((r) => r.json())
+      .then((data) => {
+        if (!data.authenticated) {
+          router.replace("/login");
+        } else {
+          setAuthenticated(true);
+        }
+      })
+      .catch(() => router.replace("/login"))
+      .finally(() => setAuthChecked(true));
+  }, [pathname, isLoginPage, router]);
+
+  // 로그인 페이지면 레이아웃 없이 렌더링
+  if (isLoginPage) return <>{children}</>;
+
+  // 인증 확인 중
+  if (!authChecked || !authenticated) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-[var(--muted-foreground)]">로딩 중...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen overflow-hidden">
