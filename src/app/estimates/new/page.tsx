@@ -20,7 +20,9 @@ export default function NewEstimatePage() {
   const addToast = useAppStore((s) => s.addToast);
 
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [newCustomerName, setNewCustomerName] = useState<string | null>(null);
   const [customerQuery, setCustomerQuery] = useState("");
+  const [newCustomerPhone, setNewCustomerPhone] = useState("");
   const [vehicles, setVehicles] = useState<{ id: string; carModel: string; plateNumber?: string | null }[]>([]);
   const [vehicleId, setVehicleId] = useState("");
   const [discount, setDiscount] = useState(0);
@@ -79,8 +81,9 @@ export default function NewEstimatePage() {
   const formatCurrency = (n: number) => n.toLocaleString("ko-KR");
 
   const handleSubmit = async () => {
-    if (!selectedCustomer) {
-      addToast("고객을 선택해주세요.", "error");
+    const resolvedCustomerName = newCustomerName || (customerQuery.trim() || null);
+    if (!selectedCustomer && !resolvedCustomerName) {
+      addToast("고객을 선택하거나 이름을 입력해주세요.", "error");
       return;
     }
     const validItems = items.filter((i) => i.name.trim());
@@ -91,8 +94,7 @@ export default function NewEstimatePage() {
 
     setSubmitting(true);
     try {
-      await createEstimate({
-        customerId: selectedCustomer.id,
+      const payload: Record<string, unknown> = {
         vehicleId: vehicleId || null,
         discount,
         memo: memo || null,
@@ -104,8 +106,22 @@ export default function NewEstimatePage() {
           unitPrice: item.unitPrice,
           memo: item.memo || null,
         })),
-      });
-      addToast("견적서가 작성되었습니다.", "success");
+      };
+
+      if (selectedCustomer) {
+        payload.customerId = selectedCustomer.id;
+      } else {
+        payload.customerName = resolvedCustomerName;
+        payload.customerPhone = newCustomerPhone || undefined;
+      }
+
+      await createEstimate(payload);
+      addToast(
+        resolvedCustomerName
+          ? `"${resolvedCustomerName}" 고객 등록 + 견적서 작성 완료!`
+          : "견적서가 작성되었습니다.",
+        "success"
+      );
       router.push("/estimates");
     } catch (err) {
       addToast(err instanceof Error ? err.message : "작성 실패", "error");
@@ -128,23 +144,47 @@ export default function NewEstimatePage() {
             selectedCustomer={selectedCustomer}
             onSelect={(c) => {
               setSelectedCustomer(c);
+              setNewCustomerName(null);
+              setCustomerQuery("");
+              setNewCustomerPhone("");
+            }}
+            onNewCustomer={(name) => {
+              setSelectedCustomer(null);
+              setNewCustomerName(name);
               setCustomerQuery("");
             }}
-            onNewCustomer={() => {}}
             onQueryChange={(q) => setCustomerQuery(q)}
             onClear={() => {
               setSelectedCustomer(null);
+              setNewCustomerName(null);
               setCustomerQuery("");
+              setNewCustomerPhone("");
               setVehicles([]);
               setVehicleId("");
             }}
           />
-          {!selectedCustomer && customerQuery && (
-            <p className="text-xs text-[var(--muted-foreground)] mt-1">
-              기존 고객을 선택해주세요. 신규 고객은 고객 관리에서 먼저 등록해주세요.
-            </p>
-          )}
         </div>
+
+        {/* 신규 고객 정보 입력 */}
+        {(newCustomerName || (!selectedCustomer && customerQuery.trim())) && (
+          <div className="glass-card rounded-lg p-3 space-y-2">
+            <p className="text-sm font-medium text-[var(--primary)]">
+              신규 고객: {newCustomerName || customerQuery.trim()}
+            </p>
+            <div>
+              <label className="block text-xs text-[var(--muted-foreground)] mb-1">
+                전화번호 (선택)
+              </label>
+              <input
+                type="tel"
+                value={newCustomerPhone}
+                onChange={(e) => setNewCustomerPhone(e.target.value)}
+                placeholder="010-0000-0000"
+                className={inputClass}
+              />
+            </div>
+          </div>
+        )}
 
         {/* 차량 선택 */}
         {vehicles.length > 0 && (

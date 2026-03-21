@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { fetchInventory, previewImport, importFile, exportInventory } from "@/features/inventory/api";
 import type { InventoryItem, ImportPreviewResult, ImportResult } from "@/types/inventory";
 import { CATEGORIES } from "@/types/inventory";
@@ -47,10 +48,12 @@ const columns: Column<InventoryItem>[] = [
 ];
 
 export default function InventoryPage() {
+  const router = useRouter();
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [allItems, setAllItems] = useState<InventoryItem[]>([]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
+  const [lowStock, setLowStock] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // 임포트/엑스포트 상태
@@ -70,18 +73,18 @@ export default function InventoryPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await fetchInventory(search, category);
+      const data = await fetchInventory(search, category, lowStock);
       setItems(data);
-      if (!category && !search) setAllItems(data);
+      if (!category && !search && !lowStock) setAllItems(data);
     } catch {
       setItems([]);
     }
     setLoading(false);
-  }, [search, category]);
+  }, [search, category, lowStock]);
 
   useEffect(() => {
     load();
-  }, [category]);
+  }, [category, lowStock]);
 
   // 파일 선택 → 미리보기 요청
   const handleFileSelected = async (file: File) => {
@@ -162,7 +165,7 @@ export default function InventoryPage() {
         </div>
       </div>
 
-      <div className="flex gap-3 mb-4">
+      <div className="flex flex-wrap gap-3 mb-4 items-center">
         <SearchBar value={search} onChange={setSearch} onSearch={load} placeholder="부품명 검색..." />
         <select
           value={category}
@@ -174,6 +177,15 @@ export default function InventoryPage() {
             <option key={c} value={c}>{c}</option>
           ))}
         </select>
+        <label className="flex items-center gap-2 glass-input rounded-lg px-3 py-2 text-sm cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={lowStock}
+            onChange={(e) => setLowStock(e.target.checked)}
+            className="rounded border-[var(--border)] accent-[var(--primary)]"
+          />
+          <span className="text-[var(--destructive)] font-medium whitespace-nowrap">재고 부족만</span>
+        </label>
       </div>
 
       <DataTable
@@ -183,6 +195,7 @@ export default function InventoryPage() {
         loading={loading}
         emptyTitle="등록된 부품이 없습니다."
         emptyDescription="부품을 등록하거나 CSV/Excel 파일을 업로드하여 재고를 관리하세요."
+        onRowClick={(item) => router.push(`/inventory/${item.id}`)}
       />
 
       {/* 모달들 */}

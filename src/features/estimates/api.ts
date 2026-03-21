@@ -1,9 +1,11 @@
 import type { Estimate } from "@/types/estimate";
 
-export async function fetchEstimates(search?: string, status?: string): Promise<Estimate[]> {
+export async function fetchEstimates(search?: string, status?: string, from?: string, to?: string): Promise<Estimate[]> {
   const params = new URLSearchParams();
   if (search) params.set("search", search);
   if (status) params.set("status", status);
+  if (from) params.set("from", from);
+  if (to) params.set("to", to);
   const res = await fetch(`/api/estimates?${params}`);
   if (!res.ok) throw new Error("견적서 목록 조회 실패");
   return res.json();

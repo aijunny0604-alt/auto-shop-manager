@@ -62,13 +62,30 @@ body::before {
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
   border-radius: var(--radius);
-  transition: all 0.25s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-card:hover {
   background: rgba(255, 255, 255, 0.07);
   border-color: rgba(212, 184, 114, 0.2);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* 클릭 가능한 카드 */
+.glass-card-clickable {
+  cursor: pointer;
+}
+
+.glass-card-clickable:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(212, 184, 114, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(212, 184, 114, 0.1);
+  transform: translateY(-2px);
+}
+
+.glass-card-clickable:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .glass-input {
@@ -98,12 +115,18 @@ body::before {
   border: 1px solid rgba(212, 184, 114, 0.5);
   color: #1a1a1e;
   font-weight: 500;
-  transition: all 0.2s ease;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-btn:hover {
   background: rgba(212, 184, 114, 1);
-  box-shadow: 0 2px 12px rgba(212, 184, 114, 0.2);
+  box-shadow: 0 4px 16px rgba(212, 184, 114, 0.3);
+  transform: translateY(-1px);
+}
+
+.glass-btn:active {
+  transform: translateY(0);
 }
 
 .glass-btn-outline {
@@ -111,12 +134,18 @@ body::before {
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.15);
   color: var(--foreground);
-  transition: all 0.2s ease;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-btn-outline:hover {
   background: rgba(255, 255, 255, 0.12);
   border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.glass-btn-outline:active {
+  transform: translateY(0);
 }
 
 .glass-btn-danger {
@@ -124,12 +153,18 @@ body::before {
   backdrop-filter: blur(8px);
   border: 1px solid rgba(239, 68, 68, 0.3);
   color: #fecaca;
-  transition: all 0.2s ease;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-btn-danger:hover {
   background: rgba(239, 68, 68, 0.75);
-  box-shadow: 0 2px 12px rgba(239, 68, 68, 0.15);
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.2);
+  transform: translateY(-1px);
+}
+
+.glass-btn-danger:active {
+  transform: translateY(0);
 }
 
 @media print {
@@ -151,6 +186,36 @@ body::before {
     padding: 0 !important;
     width: 100% !important;
   }
+}
+
+/* 글로벌 커서 & 인터랙션 */
+button, [role="button"], a, select, label[for], .cursor-pointer {
+  cursor: pointer;
+}
+
+h1, h2, h3, h4, h5, h6, p, span, label, th, td {
+  cursor: default;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input, textarea, [contenteditable] {
+  cursor: text;
+}
+
+/* 액션 버튼 호버 (인라인 작은 버튼들) */
+.action-btn {
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.action-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.15);
+}
+
+.action-btn:active {
+  transform: translateY(0) scale(0.97);
 }
 
 @keyframes slideIn {

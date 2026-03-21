@@ -78,8 +78,8 @@ export default function DataTable<T>({
             <tr
               key={keyExtractor(item)}
               className={cn(
-                "border-t border-[var(--border)] hover:bg-[var(--accent)]",
-                onRowClick && "cursor-pointer"
+                "border-t border-[var(--border)] hover:bg-[var(--accent)] transition-colors duration-200",
+                onRowClick && "cursor-pointer hover:bg-[var(--accent)]/80"
               )}
               onClick={() => onRowClick?.(item)}
             >

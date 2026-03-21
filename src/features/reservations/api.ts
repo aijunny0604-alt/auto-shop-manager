@@ -2,10 +2,12 @@ import type { Reservation, CreateReservationInput } from "@/types/reservation";
 
 const BASE = "/api/reservations";
 
-export async function fetchReservations(from?: string, to?: string): Promise<Reservation[]> {
+export async function fetchReservations(from?: string, to?: string, status?: string, serviceType?: string): Promise<Reservation[]> {
   const params = new URLSearchParams();
   if (from) params.set("from", from);
   if (to) params.set("to", to);
+  if (status) params.set("status", status);
+  if (serviceType) params.set("serviceType", serviceType);
   const res = await fetch(`${BASE}?${params}`);
   return res.json();
 }

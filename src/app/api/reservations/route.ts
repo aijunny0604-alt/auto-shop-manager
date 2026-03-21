@@ -9,16 +9,20 @@ export async function GET(request: NextRequest) {
   const from = searchParams.get("from");
   const to = searchParams.get("to");
   const status = searchParams.get("status");
+  const serviceType = searchParams.get("serviceType");
 
   const where: Record<string, unknown> = {};
   if (from || to) {
     where.scheduledAt = {
       ...(from && { gte: new Date(from) }),
-      ...(to && { lte: new Date(to) }),
+      ...(to && { lte: new Date(to + "T23:59:59") }),
     };
   }
   if (status) {
     where.status = status;
+  }
+  if (serviceType) {
+    where.serviceType = serviceType;
   }
 
   const reservations = await prisma.reservation.findMany({

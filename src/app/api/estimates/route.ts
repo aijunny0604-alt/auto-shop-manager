@@ -6,6 +6,8 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const search = searchParams.get("search") || "";
   const status = searchParams.get("status") || "";
+  const from = searchParams.get("from");
+  const to = searchParams.get("to");
 
   const where: Record<string, unknown> = {};
   if (search) {
@@ -16,6 +18,12 @@ export async function GET(request: NextRequest) {
   }
   if (status) {
     where.status = status;
+  }
+  if (from || to) {
+    where.createdAt = {
+      ...(from && { gte: new Date(from) }),
+      ...(to && { lte: new Date(to + "T23:59:59") }),
+    };
   }
 
   const estimates = await prisma.estimate.findMany({
@@ -41,9 +49,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "잘못된 요청 형식입니다." }, { status: 400 });
   }
 
-  const { customerId, vehicleId, items, discount, memo, validUntil } = body;
+  const { customerId, customerName, customerPhone, vehicleId, items, discount, memo, validUntil } = body;
 
-  if (!customerId) {
+  if (!customerId && !customerName) {
     return NextResponse.json({ error: "고객은 필수입니다." }, { status: 400 });
   }
   if (!items || !Array.isArray(items) || items.length === 0) {
@@ -52,6 +60,15 @@ export async function POST(request: NextRequest) {
 
   try {
     const estimate = await prisma.$transaction(async (tx) => {
+      // 신규 고객 생성 (customerName이 있고 customerId가 없는 경우)
+      let resolvedCustomerId = customerId;
+      if (!customerId && customerName) {
+        const newCustomer = await tx.customer.create({
+          data: { name: customerName, phone: customerPhone || null },
+        });
+        resolvedCustomerId = newCustomer.id;
+      }
+
       // 견적번호 생성: EST-YYYYMMDD-NNN
       const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
       const count = await tx.estimate.count({
@@ -70,7 +87,7 @@ export async function POST(request: NextRequest) {
       const created = await tx.estimate.create({
         data: {
           estimateNo,
-          customerId,
+          customerId: resolvedCustomerId,
           vehicleId: vehicleId || null,
           discount: discount || 0,
           totalAmount,

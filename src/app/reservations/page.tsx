@@ -1,22 +1,41 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { fetchReservations, updateReservation, deleteReservation } from "@/features/reservations/api";
 import type { Reservation } from "@/types/reservation";
 import { RESERVATION_STATUS_LABELS } from "@/types/reservation";
 import type { ReservationStatus } from "@/types/reservation";
 import { formatDateTime } from "@/lib/utils";
 
+const SERVICE_TYPES = ["정비", "튜닝", "점검", "기타"];
+
+function getMonthRange() {
+  const now = new Date();
+  const from = new Date(now.getFullYear(), now.getMonth(), 1);
+  const to = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  return {
+    from: from.toISOString().slice(0, 10),
+    to: to.toISOString().slice(0, 10),
+  };
+}
+
 export default function ReservationsPage() {
+  const router = useRouter();
+  const defaultRange = getMonthRange();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [calendarConnected, setCalendarConnected] = useState(false);
+  const [fromDate, setFromDate] = useState(defaultRange.from);
+  const [toDate, setToDate] = useState(defaultRange.to);
+  const [statusFilter, setStatusFilter] = useState("");
+  const [serviceTypeFilter, setServiceTypeFilter] = useState("");
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await fetchReservations();
+      const data = await fetchReservations(fromDate, toDate, statusFilter, serviceTypeFilter);
       setReservations(data);
     } catch {
       setReservations([]);
@@ -29,11 +48,11 @@ export default function ReservationsPage() {
       const status = await res.json();
       setCalendarConnected(status.connected);
     } catch { /* ignore */ }
-  };
+  }, [fromDate, toDate, statusFilter, serviceTypeFilter]);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
   const handleStatusChange = async (id: string, status: string) => {
     await updateReservation(id, { status } as Partial<Reservation>);
@@ -80,6 +99,45 @@ export default function ReservationsPage() {
         </div>
       </div>
 
+      <div className="flex flex-wrap gap-3 mb-4">
+        <div className="flex items-center gap-1.5">
+          <label className="text-sm text-[var(--muted-foreground)] whitespace-nowrap">기간</label>
+          <input
+            type="date"
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
+            className="glass-input rounded-lg px-3 py-2 text-sm"
+          />
+          <span className="text-sm text-[var(--muted-foreground)]">~</span>
+          <input
+            type="date"
+            value={toDate}
+            onChange={(e) => setToDate(e.target.value)}
+            className="glass-input rounded-lg px-3 py-2 text-sm"
+          />
+        </div>
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="glass-input rounded-lg px-3 py-2 text-sm"
+        >
+          <option value="">전체 상태</option>
+          {Object.entries(RESERVATION_STATUS_LABELS).map(([k, v]) => (
+            <option key={k} value={k}>{v}</option>
+          ))}
+        </select>
+        <select
+          value={serviceTypeFilter}
+          onChange={(e) => setServiceTypeFilter(e.target.value)}
+          className="glass-input rounded-lg px-3 py-2 text-sm"
+        >
+          <option value="">전체 서비스</option>
+          {SERVICE_TYPES.map((t) => (
+            <option key={t} value={t}>{t}</option>
+          ))}
+        </select>
+      </div>
+
       {loading ? (
         <p className="text-[var(--muted-foreground)]">로딩 중...</p>
       ) : reservations.length === 0 ? (
@@ -91,7 +149,8 @@ export default function ReservationsPage() {
           {reservations.map((r) => (
             <div
               key={r.id}
-              className="glass-card p-4"
+              onClick={() => router.push(`/reservations/${r.id}`)}
+              className="glass-card glass-card-clickable p-4"
             >
               <div className="flex items-start justify-between">
                 <div>
@@ -112,11 +171,11 @@ export default function ReservationsPage() {
                     <p className="mt-1 text-sm">{r.description}</p>
                   )}
                 </div>
-                <div className="flex gap-1">
+                <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
                   {r.status === "PENDING" && (
                     <button
                       onClick={() => handleStatusChange(r.id, "CONFIRMED")}
-                      className="rounded px-2 py-1 text-xs bg-blue-50 text-blue-600 hover:bg-blue-100"
+                      className="action-btn rounded px-2 py-1 text-xs bg-blue-50 text-blue-600 hover:bg-blue-100"
                     >
                       확정
                     </button>
@@ -124,20 +183,14 @@ export default function ReservationsPage() {
                   {(r.status === "PENDING" || r.status === "CONFIRMED") && (
                     <button
                       onClick={() => handleStatusChange(r.id, "COMPLETED")}
-                      className="rounded px-2 py-1 text-xs bg-green-50 text-green-600 hover:bg-green-100"
+                      className="action-btn rounded px-2 py-1 text-xs bg-green-50 text-green-600 hover:bg-green-100"
                     >
                       완료
                     </button>
                   )}
-                  <Link
-                    href={`/reservations/${r.id}`}
-                    className="glass-card rounded px-2 py-1 text-xs hover:bg-[var(--accent)]"
-                  >
-                    수정
-                  </Link>
                   <button
                     onClick={() => handleDelete(r.id)}
-                    className="rounded px-2 py-1 text-xs text-[var(--destructive)] hover:bg-red-50"
+                    className="action-btn rounded px-2 py-1 text-xs text-[var(--destructive)] hover:bg-red-50"
                   >
                     삭제
                   </button>

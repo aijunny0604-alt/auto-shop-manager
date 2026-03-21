@@ -9,7 +9,9 @@ const navItems = [
   { href: "/customers", label: "고객 관리", icon: "👥" },
   { href: "/reservations", label: "예약 관리", icon: "📅" },
   { href: "/estimates", label: "견적서", icon: "📝" },
+  { href: "/revenue", label: "매출 관리", icon: "💰" },
   { href: "/calendar", label: "캘린더", icon: "📆" },
+  { href: "/settings", label: "설정/백업", icon: "⚙️" },
 ];
 
 export function Sidebar({ onClose }: { onClose?: () => void }) {

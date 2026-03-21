@@ -8,7 +8,14 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get("search") || "";
 
   const customers = await prisma.customer.findMany({
-    where: search ? { name: { contains: search } } : {},
+    where: search
+      ? {
+          OR: [
+            { name: { contains: search } },
+            { phone: { contains: search } },
+          ],
+        }
+      : {},
     orderBy: { updatedAt: "desc" },
     take: search ? 15 : 100,
     include: {

@@ -2,28 +2,32 @@
 
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { fetchEstimates, deleteEstimate } from "@/features/estimates/api";
 import { useAppStore } from "@/store/useAppStore";
 import type { Estimate } from "@/types/estimate";
 import { ESTIMATE_STATUS_LABELS } from "@/types/estimate";
 
 export default function EstimatesPage() {
+  const router = useRouter();
   const [estimates, setEstimates] = useState<Estimate[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
   const addToast = useAppStore((s) => s.addToast);
 
   const load = useCallback(async () => {
     try {
-      const data = await fetchEstimates(search, statusFilter);
+      const data = await fetchEstimates(search, statusFilter, fromDate, toDate);
       setEstimates(data);
     } catch {
       addToast("견적서 목록 조회 실패", "error");
     } finally {
       setLoading(false);
     }
-  }, [search, statusFilter, addToast]);
+  }, [search, statusFilter, fromDate, toDate, addToast]);
 
   useEffect(() => {
     load();
@@ -64,12 +68,12 @@ export default function EstimatesPage() {
         </Link>
       </div>
 
-      <div className="flex gap-3 mb-4">
+      <div className="flex flex-wrap gap-3 mb-4">
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="고객명 또는 견적번호 검색..."
-          className="glass-input flex-1 rounded-lg px-3 py-2 text-sm"
+          className="glass-input flex-1 min-w-[200px] rounded-lg px-3 py-2 text-sm"
         />
         <select
           value={statusFilter}
@@ -81,6 +85,22 @@ export default function EstimatesPage() {
             <option key={k} value={k}>{v}</option>
           ))}
         </select>
+        <div className="flex items-center gap-1.5">
+          <label className="text-sm text-[var(--muted-foreground)] whitespace-nowrap">기간</label>
+          <input
+            type="date"
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
+            className="glass-input rounded-lg px-3 py-2 text-sm"
+          />
+          <span className="text-sm text-[var(--muted-foreground)]">~</span>
+          <input
+            type="date"
+            value={toDate}
+            onChange={(e) => setToDate(e.target.value)}
+            className="glass-input rounded-lg px-3 py-2 text-sm"
+          />
+        </div>
       </div>
 
       {loading ? (
@@ -100,7 +120,8 @@ export default function EstimatesPage() {
           {estimates.map((est) => (
             <div
               key={est.id}
-              className="glass-card flex items-center gap-4 p-4 hover:bg-[var(--accent)]/50 transition-colors"
+              onClick={() => router.push(`/estimates/${est.id}`)}
+              className="glass-card glass-card-clickable flex items-center gap-4 p-4"
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
@@ -118,22 +139,16 @@ export default function EstimatesPage() {
               <div className="text-right">
                 <p className="font-bold">{formatCurrency(est.totalAmount)}</p>
               </div>
-              <div className="flex gap-1">
-                <Link
-                  href={`/estimates/${est.id}`}
-                  className="rounded px-3 py-1.5 text-xs border border-[var(--border)] hover:bg-[var(--accent)]"
-                >
-                  상세
-                </Link>
+              <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
                 <Link
                   href={`/estimates/${est.id}/print`}
-                  className="rounded px-3 py-1.5 text-xs border border-[var(--border)] hover:bg-[var(--accent)]"
+                  className="action-btn rounded px-3 py-1.5 text-xs border border-[var(--border)] hover:bg-[var(--accent)]"
                 >
                   인쇄
                 </Link>
                 <button
                   onClick={() => handleDelete(est.id)}
-                  className="rounded px-3 py-1.5 text-xs text-[var(--destructive)] border border-[var(--destructive)]/30 hover:bg-[var(--destructive)]/10"
+                  className="action-btn rounded px-3 py-1.5 text-xs text-[var(--destructive)] border border-[var(--destructive)]/30 hover:bg-[var(--destructive)]/10"
                 >
                   삭제
                 </button>

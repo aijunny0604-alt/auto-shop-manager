@@ -2,10 +2,11 @@ import type { InventoryItem, CreateInventoryInput, StockLogInput, ImportPreviewR
 
 const BASE = "/api/inventory";
 
-export async function fetchInventory(search?: string, category?: string): Promise<InventoryItem[]> {
+export async function fetchInventory(search?: string, category?: string, lowStock?: boolean): Promise<InventoryItem[]> {
   const params = new URLSearchParams();
   if (search) params.set("search", search);
   if (category) params.set("category", category);
+  if (lowStock) params.set("lowStock", "true");
   const res = await fetch(`${BASE}?${params}`);
   return res.json();
 }

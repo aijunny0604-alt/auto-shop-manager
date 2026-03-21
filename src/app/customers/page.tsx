@@ -54,7 +54,7 @@ export default function CustomersPage() {
       >
         <input
           type="text"
-          placeholder="고객명 검색..."
+          placeholder="고객명 또는 전화번호 검색..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="glass-input w-full max-w-md rounded-lg px-3 py-2 text-sm"
@@ -73,7 +73,7 @@ export default function CustomersPage() {
             <Link
               key={c.id}
               href={`/customers/${c.id}`}
-              className="glass-card p-4 hover:bg-[var(--accent)] transition-colors"
+              className="glass-card glass-card-clickable p-4"
             >
               <p className="font-medium truncate">{c.name}</p>
               <p className="text-sm text-[var(--muted-foreground)] truncate">

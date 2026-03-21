@@ -9,7 +9,8 @@ const navItems = [
   { href: "/customers", label: "고객", icon: "👥" },
   { href: "/reservations", label: "예약", icon: "📅" },
   { href: "/estimates", label: "견적", icon: "📝" },
-  { href: "/calendar", label: "캘린더", icon: "📆" },
+  { href: "/revenue", label: "매출", icon: "💰" },
+  { href: "/settings", label: "설정", icon: "⚙️" },
 ];
 
 export function MobileNav() {

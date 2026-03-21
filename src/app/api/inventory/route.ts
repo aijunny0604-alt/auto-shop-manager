@@ -7,6 +7,8 @@ export async function GET(request: NextRequest) {
   const search = searchParams.get("search") || "";
   const category = searchParams.get("category") || "";
 
+  const lowStock = searchParams.get("lowStock");
+
   const where: Record<string, unknown> = {};
   if (search) {
     where.name = { contains: search };
@@ -15,11 +17,16 @@ export async function GET(request: NextRequest) {
     where.category = category;
   }
 
-  const items = await prisma.inventoryItem.findMany({
+  let items = await prisma.inventoryItem.findMany({
     where,
     orderBy: { updatedAt: "desc" },
     include: { _count: { select: { stockLogs: true } } },
   });
+
+  // 재고 부족 필터 (quantity <= minQuantity)
+  if (lowStock === "true") {
+    items = items.filter((item) => item.quantity <= item.minQuantity);
+  }
 
   return NextResponse.json(items);
 }
