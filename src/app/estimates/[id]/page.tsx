@@ -118,7 +118,7 @@ export default function EstimateDetailPage({
   const partItems = estimate.items?.filter((i) => i.type === "PART") || [];
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold">{estimate.estimateNo}</h1>
