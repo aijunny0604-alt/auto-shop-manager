@@ -24,6 +24,9 @@ const TABLE_LABELS: Record<string, string> = {
 export default function SettingsPage() {
   const [lastBackup, setLastBackup] = useState<string | null>(null);
   const [backupLoading, setBackupLoading] = useState(false);
+  const [googleConnected, setGoogleConnected] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(true);
+  const [disconnecting, setDisconnecting] = useState(false);
 
   const [preview, setPreview] = useState<BackupPreview | null>(null);
   const [fileName, setFileName] = useState<string>("");
@@ -38,7 +41,28 @@ export default function SettingsPage() {
   useEffect(() => {
     const saved = localStorage.getItem("lastBackupAt");
     if (saved) setLastBackup(saved);
+
+    // Google 연결 상태 확인
+    fetch("/api/calendar/status")
+      .then((r) => r.json())
+      .then((data) => setGoogleConnected(data.connected))
+      .catch(() => setGoogleConnected(false))
+      .finally(() => setGoogleLoading(false));
   }, []);
+
+  const handleGoogleDisconnect = async () => {
+    if (!confirm("Google 계정 연동을 해제하시겠습니까?\nGoogle Calendar 동기화가 중단됩니다.")) return;
+    setDisconnecting(true);
+    try {
+      const res = await fetch("/api/auth/google/disconnect", { method: "POST" });
+      if (!res.ok) throw new Error("해제 실패");
+      setGoogleConnected(false);
+    } catch {
+      alert("Google 계정 해제에 실패했습니다.");
+    } finally {
+      setDisconnecting(false);
+    }
+  };
 
   // ── 백업 다운로드 ──
   const handleBackup = async () => {
@@ -162,6 +186,47 @@ export default function SettingsPage() {
       <h1 className="text-2xl font-bold mb-6">설정</h1>
 
       <div className="max-w-2xl space-y-6">
+        {/* ── Google 계정 연동 ── */}
+        <section className="glass-card p-6">
+          <h2 className="text-lg font-semibold mb-1">Google 계정 연동</h2>
+          <p className="text-sm text-[var(--muted-foreground)] mb-4">
+            Google Calendar과 연동하여 예약 일정을 자동 동기화합니다.
+          </p>
+
+          {googleLoading ? (
+            <p className="text-sm text-[var(--muted-foreground)]">확인 중...</p>
+          ) : googleConnected ? (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="inline-block w-2 h-2 rounded-full bg-[var(--success)]" />
+                <span className="text-sm font-medium text-[var(--success)]">Google 계정 연결됨</span>
+              </div>
+              <div className="flex gap-2">
+                <a
+                  href="/api/auth/google"
+                  className="glass-btn rounded-lg px-4 py-2 text-sm font-medium"
+                >
+                  다른 계정으로 변경
+                </a>
+                <button
+                  onClick={handleGoogleDisconnect}
+                  disabled={disconnecting}
+                  className="glass-btn-danger rounded-lg px-4 py-2 text-sm font-medium disabled:opacity-50"
+                >
+                  {disconnecting ? "해제 중..." : "연동 해제"}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <a
+              href="/api/auth/google"
+              className="glass-btn rounded-lg px-5 py-2.5 text-sm font-medium inline-block"
+            >
+              Google 계정 연결
+            </a>
+          )}
+        </section>
+
         {/* ── 데이터 백업 ── */}
         <section className="glass-card p-6">
           <h2 className="text-lg font-semibold mb-1">데이터 백업</h2>
