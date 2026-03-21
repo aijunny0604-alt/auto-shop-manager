@@ -88,11 +88,11 @@ export default function CustomerDetailPage() {
   return (
     <div>
       {/* 고객 정보 */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <h1 className="text-2xl font-bold">{customer.name as string}</h1>
         <div className="flex gap-2">
-          <button onClick={() => setEditing(!editing)} className="glass-card rounded-lg px-3 py-1.5 text-sm hover:bg-[var(--accent)]">{editing ? "취소" : "수정"}</button>
-          <button onClick={handleDelete} className="glass-btn-danger rounded-lg px-3 py-1.5 text-sm hover:opacity-90">삭제</button>
+          <button onClick={() => setEditing(!editing)} className="glass-btn rounded-lg px-4 py-2 text-sm">{editing ? "취소" : "수정"}</button>
+          <button onClick={handleDelete} className="glass-btn-danger rounded-lg px-4 py-2 text-sm">삭제</button>
         </div>
       </div>
 
@@ -104,9 +104,15 @@ export default function CustomerDetailPage() {
           <button type="submit" className="glass-btn rounded-lg px-4 py-2 text-sm">저장</button>
         </form>
       ) : (
-        <div className="mb-6 glass-card p-4 grid grid-cols-2 gap-3">
-          <div><span className="text-xs text-[var(--muted-foreground)]">연락처</span><p className="font-medium">{(customer.phone as string) || "-"}</p></div>
-          <div><span className="text-xs text-[var(--muted-foreground)]">메모</span><p className="font-medium">{(customer.memo as string) || "-"}</p></div>
+        <div className="mb-6 glass-card p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <p className="text-xs text-[var(--muted-foreground)] mb-1">연락처</p>
+            <p className="font-medium">{(customer.phone as string) || "-"}</p>
+          </div>
+          <div>
+            <p className="text-xs text-[var(--muted-foreground)] mb-1">메모</p>
+            <p className="font-medium">{(customer.memo as string) || "-"}</p>
+          </div>
         </div>
       )}
 
@@ -121,7 +127,7 @@ export default function CustomerDetailPage() {
       {showVehicleForm && (
         <form onSubmit={handleAddVehicle} className="mb-4 glass-card p-4 space-y-3">
           <input name="carModel" required placeholder="차종 (예: 현대 아반떼 CN7)" className="glass-input w-full rounded-lg px-3 py-2 text-sm" />
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <input name="year" type="number" placeholder="연식" className="glass-input rounded-lg px-3 py-2 text-sm" />
             <input name="plateNumber" placeholder="번호판" className="glass-input rounded-lg px-3 py-2 text-sm" />
             <input name="mileage" type="number" placeholder="주행거리(km)" className="glass-input rounded-lg px-3 py-2 text-sm" />
@@ -170,15 +176,17 @@ export default function CustomerDetailPage() {
               {v.serviceRecords && v.serviceRecords.length > 0 && (
                 <div className="mt-3 space-y-2">
                   {v.serviceRecords.map((sr: ServiceRecord) => (
-                    <div key={sr.id} className="flex items-center justify-between glass-card px-3 py-2 text-sm">
-                      <div className="flex items-center gap-2">
-                        <span className="glass-btn rounded px-1.5 py-0.5 text-xs">{sr.serviceType}</span>
-                        <span>{sr.description}</span>
-                      </div>
-                      <div className="flex items-center gap-3 text-[var(--muted-foreground)]">
-                        <span>{formatCurrency(sr.cost)}</span>
-                        <span>{formatDate(sr.serviceDate)}</span>
-                        <button onClick={async () => { if (confirm("삭제하시겠습니까?")) { await deleteServiceRecord(sr.id); load(); } }} className="text-[var(--destructive)] hover:underline">삭제</button>
+                    <div key={sr.id} className="glass-card px-3 py-3 text-sm">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="glass-btn rounded px-1.5 py-0.5 text-xs">{sr.serviceType}</span>
+                          <span>{sr.description}</span>
+                        </div>
+                        <div className="flex items-center gap-3 text-[var(--muted-foreground)]">
+                          <span>{formatCurrency(sr.cost)}</span>
+                          <span>{formatDate(sr.serviceDate)}</span>
+                          <button onClick={async () => { if (confirm("삭제하시겠습니까?")) { await deleteServiceRecord(sr.id); load(); } }} className="text-[var(--destructive)] hover:underline">삭제</button>
+                        </div>
                       </div>
                     </div>
                   ))}
