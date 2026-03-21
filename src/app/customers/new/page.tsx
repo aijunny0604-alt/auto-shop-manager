@@ -13,7 +13,7 @@ type FormValues = z.infer<typeof createCustomerSchema>;
 export default function NewCustomerPage() {
   const router = useRouter();
   const addToast = useAppStore((s) => s.addToast);
-  const [addVehicle, setAddVehicle] = useState(false);
+  const [addVehicle, setAddVehicle] = useState(true);
   const [vehicleData, setVehicleData] = useState({
     carModel: "",
     year: "",
